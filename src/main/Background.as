@@ -16,7 +16,8 @@ package main
             // Перехватываем нажатие кнопки мыши по нашему мувику
             addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
             // Отпускание мышки
-            addEventListener(Event.MOUSE_LEAVE, handleMouseUp);
+            stage.addEventListener(Event.MOUSE_LEAVE, handleMouseUp);
+            addEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
         }
 
         // Нажатие кнопки мыши по нашему мувику
