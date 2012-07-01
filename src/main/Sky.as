@@ -2,7 +2,7 @@ package main
 {
     import flash.display.MovieClip;
     import flash.events.*;
-    import main.*;
+    import main.MovingObject;
 
     dynamic public class Sky extends MovieClip
     {
@@ -26,7 +26,7 @@ package main
             var x1:Number, y1:Number; // точка вброса
             var x2:Number, y2:Number; // куда двигаться
             var cnt:Number;    // количество вбрасываемых встероидов
-            var new_asteroid:Moving_object; // объект астероида
+            var new_asteroid:MovingObject; // объект астероида
 
             x1=0; y1=0; // пока так, для теста, из левого верхнего угла
             x2=this.earth.x; y2=this.earth.y; // двигаться к земле
@@ -34,7 +34,7 @@ package main
             cnt = MIN_DROP + Math.floor((MAX_DROP-MIN_DROP)*Math.random());
             while (cnt--)
             {
-                new_asteroid = new Moving_object();     // создаем новый астероид
+                new_asteroid = new MovingObject();     // создаем новый астероид
                 addChild(new_asteroid);           // добавляем его на наш мувиклип
                 all_moving.push(new_asteroid);    // запоминаем в массиве
                 new_asteroid.drop(x1,y1, x2,y2);  // бросаем
@@ -45,7 +45,7 @@ package main
         {
             // Проходим по всему массиву созданных объектов
             // и заставляем каждого сдвинуться в своем направлении
-            for each (var obj:Moving_object in all_moving)
+            for each (var obj:MovingObject in all_moving)
             {
                 obj.move();
             }
