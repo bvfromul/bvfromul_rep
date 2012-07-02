@@ -1,11 +1,11 @@
 package main
 {
-    public class vector_h
+    public class Vector_h
     {
         public var x:Number;
         public var y:Number;
 
-        public function vector_h(setX:Number = 0, setY:Number = 0)
+        public function Vector_h(setX:Number = 0, setY:Number = 0)
         {
             x = setX;
             y = setY;
@@ -49,6 +49,32 @@ package main
         function magnitude2():Number
         {
             return x*x + y*y;
+        }
+
+        // returns the vector projection of this vector onto v
+        function vectorProjectionOnto(v:Vector_h):Vector_h
+        {
+            var res:Vector_h = v.getUnitVector();
+            res.mulScalar(scalarProjectionOnto(v));
+            return res;
+        }
+
+        function getUnitVector():Vector_h
+        {
+            var len:Number = magnitude();
+            var res:Vector_h = new Vector_h(x,y);
+            if (len)
+            {
+                res.x /= len;
+                res.y /= len;
+            }
+            return res;
+        }
+
+        // returns the scalar projection of this vector onto v
+        function scalarProjectionOnto(v:Vector_h):Number
+        {
+            return (x*v.x + y*v.y)/v.magnitude();
         }
     }
 }
