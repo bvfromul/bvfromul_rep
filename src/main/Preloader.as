@@ -1,7 +1,7 @@
 package main
 {
     import flash.display.MovieClip;
-    import flash.events.*;
+    import flash.events.Event;
 
     dynamic public class Preloader extends MovieClip
     {

@@ -1,10 +1,8 @@
 package main
 {
     import flash.display.MovieClip;
-    import flash.events.*;
+    import flash.events.Event;
     import main.MovingObject;
-    import main.Ball;
-    import main.BallCollision;
 
     dynamic public class Sky extends MovieClip
     {
@@ -42,25 +40,26 @@ package main
                 new_asteroid = new MovingObject();     // создаем новый астероид
                 addChild(new_asteroid);           // добавляем его на наш мувиклип
                 all_moving.push(new_asteroid);    // запоминаем в массиве
-                new_asteroid.drop(x1,y1, x2,y2);  // бросаем
-            }
-            // Просим пересчитать в какие сектора попал объект
-            new_asteroid.CalcSectors();
-            // добавим в эти сектора ссылку на объект
-            for each (s in new_asteroid.sectors)
-            {
-                if (!all_sectors[s]) // такого сектора еще не было, создадим
-                    all_sectors[s] = new Object();
-                all_sectors[s][new_asteroid.name] = new_asteroid;
+                new_asteroid.drop(x1, y1, x2, y2);  // бросаем
+
+                // Просим пересчитать в какие сектора попал объект
+                new_asteroid.CalcSectors();
+                // добавим в эти сектора ссылку на объект
+                for (s in new_asteroid.sectors)
+                {
+                    if (!all_sectors[s]) // такого сектора еще не было, создадим
+                        all_sectors[s] = new Object();
+                    all_sectors[s][new_asteroid.name] = new_asteroid;
+                }
             }
         }
 
         public function Update(e : Event):void
         {
-            var s:String, obj2:BasicObject;
+            var s:String, obj2:MovingObject;
             // Проходим по всему массиву созданных объектов
             // и заставляем каждого сдвинуться в своем направлении
-            for each (var obj:BasicObject in all_moving)
+            for each (var obj:MovingObject in all_moving)
             {
                 // перед тем, как сдвинуться удалим запись об этом объекте из секторов
                 for (s in obj.sectors)
@@ -91,7 +90,7 @@ package main
             }
         }
 
-        function resolve(ball1:Ball, ball2:Ball):void
+        function resolve(ball1:MovingObject, ball2:MovingObject):void
         {
             var b1Velocity:Vector_h = ball1.velocity;
             var b2Velocity:Vector_h = ball2.velocity;
@@ -123,6 +122,18 @@ package main
 
             b1Velocity.addVector(v1Prime2);
             b2Velocity.addVector(v2Prime2);
+        }
+
+        // Отодвигает шарик 1 от шарика 2, чтобы они не пересекались
+        function PullBalls(ball1:MovingObject, ball2:MovingObject):void
+        {
+            var v:Vector_h = new Vector_h(ball1.x-ball2.x, ball1.y-ball2.y);
+            var distance:Number = v.magnitude();
+            var min_distance:Number = ball1.radius + ball2.radius;
+            if (distance > min_distance) return; // не пересекаются
+            v.mulScalar((0.1+min_distance-distance)/distance);
+            ball1.x += v.x;
+            ball1.y += v.y;
         }
     }
 }

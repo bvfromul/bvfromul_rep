@@ -76,5 +76,9 @@ package main
         {
             return (x*v.x + y*v.y)/v.magnitude();
         }
+
+        function getMulScalar( i:Number ):Vector_h {
+            return new Vector_h(x*i, y*i);
+        }
     }
 }

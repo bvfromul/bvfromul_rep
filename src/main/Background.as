@@ -2,13 +2,9 @@ package main
 {
     import flash.display.MovieClip;
     import flash.events.MouseEvent;
+    import flash.events.Event;
     import flash.geom.Rectangle;
-    import flash.events.*;
 
-    /**
-     * ...
-     * @author Ruslan
-     */
     public class Background extends MovieClip
     {
         public function Background()

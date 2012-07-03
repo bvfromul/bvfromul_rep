@@ -1,7 +1,8 @@
 package main
 {
     import flash.display.MovieClip;
-    import flash.events.*;
+    import flash.events.Event;
+    import flash.events.MouseEvent;
 
     dynamic public class BasicObject extends MovieClip
     {
@@ -31,6 +32,12 @@ package main
             var dr:Number = radius + obj2.radius;
             // если расстояние между объектами меньше суммы их радиусов - столкновение
             return (d2 < dr*dr);
+        }
+
+        function getMassa():Number
+        {
+            var r:Number = radius;
+            return (4/3*Math.PI*r*r*r)/100;       // масса шара
         }
 
         // Пересчитывает, какие сектора пересекает объект
@@ -82,7 +89,7 @@ package main
             // зная радиус объекта, располагаем полоску сверху
             hp_mc.width=radius*2;
             hp_mc.x=-radius;
-            hp_mc.y=-radius-HP_mc.height;
+            hp_mc.y=-radius-hp_mc.height;
             hp_mc.gotoAndStop(Math.floor(tkHP/mHP*100)+1);    // уровень жизни в процентах
         }
 
