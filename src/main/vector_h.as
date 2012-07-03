@@ -11,7 +11,7 @@ package main
             y = setY;
         }
 
-        function copyVector( v:Vector ):void
+        function copyVector( v:Vector_h ):void
         {
             x = v.x;
             y = v.y;
@@ -23,13 +23,13 @@ package main
             y = y1;
         }
 
-        function addVector( v:Vector ):void
+        function addVector( v:Vector_h ):void
         {
             x += v.x;
             y += v.y;
         }
 
-        function subVector( v:Vector ):void
+        function subVector( v:Vector_h ):void
         {
             x -= v.x;
             y -= v.y;
@@ -51,7 +51,7 @@ package main
             return x*x + y*y;
         }
 
-        // returns the vector projection of this vector onto v
+        // returns the Vector_h projection of this Vector_h onto v
         function vectorProjectionOnto(v:Vector_h):Vector_h
         {
             var res:Vector_h = v.getUnitVector();
@@ -71,7 +71,7 @@ package main
             return res;
         }
 
-        // returns the scalar projection of this vector onto v
+        // returns the scalar projection of this Vector_h onto v
         function scalarProjectionOnto(v:Vector_h):Number
         {
             return (x*v.x + y*v.y)/v.magnitude();
