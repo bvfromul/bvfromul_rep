@@ -31,7 +31,7 @@ package main
             var new_asteroid:MovingObject; // объект астероида
             var s:String;
 
-            x1=0; y1=0; // пока так, для теста, из левого верхнего угла
+            x1=-500; y1=-310; // пока так, для теста, из левого верхнего угла
             x2=this.earth.x; y2=this.earth.y; // двигаться к земле
             // выбираем рандомное количество
             cnt = MIN_DROP + Math.floor((MAX_DROP-MIN_DROP)*Math.random());
