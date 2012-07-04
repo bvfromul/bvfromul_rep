@@ -8,6 +8,14 @@ package main
     {
         public var radius:Number; // радиус
         public var sectors:Object;  // какие сектора пересекает объект
+        var tkHP:Number, mHP:Number; // текущий и максимальный уровни жизни
+        var hp_mc:HPline;    // мувик полоски уровня жизни
+
+        public function BasicObject()
+        {
+            addEventListener(MouseEvent.MOUSE_OVER, showInfo);// при наведении мышки - показать
+            addEventListener(MouseEvent.MOUSE_OUT, hideInfo); // при уходе мышки - убрать
+        }
 
         // Вычисляет расстояние до другого объекта в квадрате
         // Функция sqrt довольно медленная и быстрее оперировать расстоянием в квадрате
@@ -25,7 +33,7 @@ package main
         }
 
         // Определяет, столкнулись два объекта или нет
-        public function CheckCollision(obj2:BasicObject):Boolean
+        public function checkCollision(obj2:BasicObject):Boolean
         {
             var d2:Number = distance2(obj2); // квадрат расстояния
             // сумма радиусов - минимально возможное расстояние между объектами
@@ -41,11 +49,11 @@ package main
         }
 
         // Пересчитывает, какие сектора пересекает объект
-        public function CalcSectors():void
+        public function calcSectors():void
         {
             var dx:Number, dy:Number;
             var x1:Number, y1:Number;
-            var s:String;
+            var zone:String;
             sectors = new Object();      // сбрасываем список секторов
             for (dx = -1; dx <= 1; dx += 2)
             {
@@ -55,32 +63,25 @@ package main
                     x1 = x + radius*dx;
                     y1 = y + radius*dy;
                     // название сектора будет в виде "x_y"
-                    s = Math.floor(x1/100)+"_"+Math.floor(y1/100);
-                    sectors[s]=true;   // запоминаем этот сектор
+                    zone = Math.floor(x1/100)+"_"+Math.floor(y1/100);
+                    sectors[zone]=true;   // запоминаем этот сектор
                 }
             }
         }
 
-        var tkHP:Number, mHP:Number; // текущий и максимальный уровни жизни
-        var hp_mc:HPline;    // мувик полоски уровня жизни
-
-        public function BasicObject()
-        {
-            addEventListener(MouseEvent.MOUSE_OVER, ShowInfo);// при наведении мышки - показать
-            addEventListener(MouseEvent.MOUSE_OUT, HideInfo); // при уходе мышки - убрать
-        }
-
         // Отображает информацию об объекте
-        public function ShowInfo(e:Event = undefined) :void
+        public function showInfo(event:Event = undefined) :void
         {
             if (!mHP)
-            { // нет уровня жизни, нечего показывать
-                HideInfo(); // спрятать полоску, если была
+            {
+                // нет уровня жизни, нечего показывать
+                hideInfo(); // спрятать полоску, если была
                 return;
             }
 
             if (!hp_mc)
-            { // плоска еще не создавалась
+            {
+                // плоска еще не создавалась
                 hp_mc = new HPline(); // создаем мувик полоски жизни
                 addChild(hp_mc); // добавим
             }
@@ -94,23 +95,29 @@ package main
         }
 
         // Убирает информацию об объекте
-        public function HideInfo(e:Event = undefined) :void
+        public function hideInfo(event:Event = undefined) :void
         {
-            if (!(hp_mc && hp_mc.visible)) // полоска не создана или не видна
+            if (!(hp_mc && hp_mc.visible))
+            {
+                // полоска не создана или не видна
                 return;
+            }
 
             hp_mc.visible=false; // прячем
         }
 
         // set/get для текущего уровня жизни
-        public function set HP(newHP:Number) :void
+        public function set hp(newHP:Number) :void
         {
             tkHP=Math.max(0, newHP); // уровень жизни не может быть меньше нуля
-            if (hp_mc && hp_mc.visible) // нарисована полоска уровня жизни
-                ShowInfo(); // нужно обновить информацию
+            if (hp_mc && hp_mc.visible)
+            {
+                // нарисована полоска уровня жизни
+                showInfo(); // нужно обновить информацию
+            }
         }
 
-        public function get HP():Number
+        public function get hp():Number
         {
             return tkHP;
         }
@@ -119,8 +126,11 @@ package main
         public function set maxHP(new_maxHP:Number) :void
         {
             mHP=new_maxHP;
-            if (hp_mc && hp_mc.visible) // нарисована полоска уровня жизни
-                ShowInfo(); // нужно обновить информацию
+            if (hp_mc && hp_mc.visible)
+            {
+                // нарисована полоска уровня жизни
+                showInfo(); // нужно обновить информацию
+            }
         }
 
         public function get maxHP():Number

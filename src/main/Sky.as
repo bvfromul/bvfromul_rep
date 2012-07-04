@@ -18,18 +18,18 @@ package main
             // это не константы, т.к. со временем количество астероидов должно увеличиваться
             MIN_DROP=5; MAX_DROP=10;
 
-            addEventListener(Event.ENTER_FRAME, Update);
+            addEventListener(Event.ENTER_FRAME, update);
             // тестовый вброс
-            DropSeveralAsteroids();
+            dropSeveralAsteroids();
         }
 
-        public function DropSeveralAsteroids():void
+        public function dropSeveralAsteroids():void
         {
             var x1:Number, y1:Number; // точка вброса
             var x2:Number, y2:Number; // куда двигаться
             var cnt:Number;    // количество вбрасываемых встероидов
             var new_asteroid:MovingObject; // объект астероида
-            var s:String;
+            var zone:String;
 
             x1=-500; y1=-310; // пока так, для теста, из левого верхнего угла
             x2=this.earth.x; y2=this.earth.y; // двигаться к земле
@@ -43,49 +43,60 @@ package main
                 new_asteroid.drop(x1, y1, x2, y2);  // бросаем
 
                 // Просим пересчитать в какие сектора попал объект
-                new_asteroid.CalcSectors();
+                new_asteroid.calcSectors();
                 // добавим в эти сектора ссылку на объект
-                for (s in new_asteroid.sectors)
+                for (zone in new_asteroid.sectors)
                 {
-                    if (!all_sectors[s]) // такого сектора еще не было, создадим
-                        all_sectors[s] = new Object();
-                    all_sectors[s][new_asteroid.name] = new_asteroid;
+                    if (!all_sectors[zone])
+                    {
+                        // такого сектора еще не было, создадим
+                        all_sectors[zone] = new Object();
+                    }
+                    all_sectors[zone][new_asteroid.name] = new_asteroid;
                 }
             }
         }
 
-        public function Update(e : Event):void
+        public function update(event : Event):void
         {
-            var s:String, obj2:MovingObject;
+            var zone:String, obj2:MovingObject;
             // Проходим по всему массиву созданных объектов
             // и заставляем каждого сдвинуться в своем направлении
             for each (var obj:MovingObject in all_moving)
             {
                 // перед тем, как сдвинуться удалим запись об этом объекте из секторов
-                for (s in obj.sectors)
-                    delete all_sectors[s][obj.name];
+                for (zone in obj.sectors)
+                {
+                    delete all_sectors[zone][obj.name];
+                }
 
                 // смещаемся
                obj.move();
                // Просим пересчитать в какие сектора попал объект
-               obj.CalcSectors();
+               obj.calcSectors();
                // Проверяем столкновения со всеми объектами, которые есть в новых секторах
-               for (s in obj.sectors)
+               for (zone in obj.sectors)
                {
-                    if (all_sectors[s])
+                    if (all_sectors[zone])
                     {  // такой сектор есть
-                        for each (obj2 in all_sectors[s])
+                        for each (obj2 in all_sectors[zone])
                         { // проверяем на столкновение
-                            if (obj.CheckCollision(obj2)) // столкнулись
+                            if (obj.checkCollision(obj2))
+                            {
+                                    // столкнулись
                                    // делаем отскок
                                    resolve(obj, obj2);
+                            }
                         }
                     }
-                    else  // нет такого сектора
-                     all_sectors[s] = new Object(); // теперь будет
+                    else
+                    {
+                        // нет такого сектора
+                        all_sectors[zone] = new Object(); // теперь будет
+                    }
 
                     // регистрируемся в этом секторе
-                    all_sectors[s][obj.name]=obj;
+                    all_sectors[zone][obj.name]=obj;
                 }
             }
         }
@@ -98,8 +109,14 @@ package main
             var b2Mass:Number     = ball2.getMassa();
 
             // Отодвинем легкий шарик назад, чтобы не пересекались
-            if (b1Mass<b2Mass) PullBalls(ball1, ball2);
-            else PullBalls(ball2, ball1);
+            if (b1Mass < b2Mass)
+            {
+                pullBalls(ball1, ball2);
+            }
+            else
+            {
+                pullBalls(ball2, ball1);
+            }
 
             var lineOfSight:Vector_h = new Vector_h(ball1.x-ball2.x, ball1.y-ball2.y);
             var v1Prime:Vector_h = b1Velocity.vectorProjectionOnto(lineOfSight);
@@ -125,7 +142,7 @@ package main
         }
 
         // Отодвигает шарик 1 от шарика 2, чтобы они не пересекались
-        function PullBalls(ball1:MovingObject, ball2:MovingObject):void
+        function pullBalls(ball1:MovingObject, ball2:MovingObject):void
         {
             var v:Vector_h = new Vector_h(ball1.x-ball2.x, ball1.y-ball2.y);
             var distance:Number = v.magnitude();

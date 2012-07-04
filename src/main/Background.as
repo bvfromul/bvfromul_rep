@@ -21,8 +21,6 @@ package main
         {
             var dx2:Number = width-stage.stageWidth;
             var dy2:Number = height - stage.stageHeight;
-            var dx1:Number = stage.stageWidth;
-            var dy1:Number = stage.stageHeight;
             var dragRect:Rectangle = new Rectangle(64, -20, dx2, dy2);
             (this.parent as MovieClip).startDrag(false, dragRect);
         }

@@ -5,12 +5,12 @@ package main
 
     dynamic public class MovingObject extends BasicObject
     {
-        public var velocity:Vector_h; // вектор движения
-        private var rot:Number;
-
         const DROP_RADIUS:Number = 200;     // разброс при вбрасывании
         const MIN_SPEED:Number = 1;  // раброс начальной скорости
         const MAX_SPEED:Number = 10;
+
+        public var velocity:Vector_h; // вектор движения
+        private var rot:Number;
 
         public function MovingObject()
         {
