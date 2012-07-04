@@ -3,6 +3,8 @@ package main
     import flash.display.MovieClip;
     import flash.events.Event;
     import main.MovingObject;
+    import flash.geom.Rectangle;
+    import flash.events.MouseEvent;
 
     dynamic public class Sky extends MovieClip
     {
@@ -18,9 +20,30 @@ package main
             // это не константы, т.к. со временем количество астероидов должно увеличиваться
             MIN_DROP=5; MAX_DROP=10;
 
+            // Перехватываем нажатие кнопки мыши по нашему мувику
+            addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
+            // Отпускание мышки
+            stage.addEventListener(Event.MOUSE_LEAVE, handleMouseUp);
+            addEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
+
             addEventListener(Event.ENTER_FRAME, update);
             // тестовый вброс
             dropSeveralAsteroids();
+        }
+
+        // Нажатие кнопки мыши по нашему мувику
+        function handleMouseDown(event:Event):void
+        {
+            var dx2:Number = width-stage.stageWidth;
+            var dy2:Number = height - stage.stageHeight;
+            var dragRect:Rectangle = new Rectangle(-448, -310, 896, 620);
+            (this.parent as MovieClip).startDrag(false, dragRect);
+        }
+
+        // Отпустили кнопку мыши
+        function handleMouseUp(event:Event):void
+        {
+            (this.parent as MovieClip).stopDrag();
         }
 
         public function dropSeveralAsteroids():void
