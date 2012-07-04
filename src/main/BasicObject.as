@@ -54,7 +54,7 @@ package main
             var dx:Number, dy:Number;
             var x1:Number, y1:Number;
             var zone:String;
-            sectors = new Object();      // сбрасываем список секторов
+            sectors = {};      // сбрасываем список секторов
             for (dx = -1; dx <= 1; dx += 2)
             {
                 for (dy = -1; dy <= 1; dy += 2)

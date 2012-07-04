@@ -12,8 +12,8 @@ package main
 
         public function Sky()
         {
-            all_moving = new Array();
-            all_sectors = new Object();
+            all_moving = [];
+            all_sectors = {};
             // сколько астероидов вбрасывается
             // это не константы, т.к. со временем количество астероидов должно увеличиваться
             MIN_DROP=5; MAX_DROP=10;
@@ -50,7 +50,7 @@ package main
                     if (!all_sectors[zone])
                     {
                         // такого сектора еще не было, создадим
-                        all_sectors[zone] = new Object();
+                        all_sectors[zone] = {};
                     }
                     all_sectors[zone][new_asteroid.name] = new_asteroid;
                 }
@@ -92,7 +92,7 @@ package main
                     else
                     {
                         // нет такого сектора
-                        all_sectors[zone] = new Object(); // теперь будет
+                        all_sectors[zone] = {}; // теперь будет
                     }
 
                     // регистрируемся в этом секторе
