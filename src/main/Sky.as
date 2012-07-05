@@ -34,16 +34,18 @@ package main
         // Нажатие кнопки мыши по нашему мувику
         function handleMouseDown(event:Event):void
         {
-            var dx2:Number = width-stage.stageWidth;
-            var dy2:Number = height - stage.stageHeight;
-            var dragRect:Rectangle = new Rectangle(-448, -310, 896, 620);
-            (this.parent as MovieClip).startDrag(false, dragRect);
+            var dx1:Number = stage.stageWidth-Math.round((width-50)/2);
+            var dy1:Number = stage.stageHeight-Math.round(height/2);
+            var dx2:Number = Math.round((width-50)/2) - dx1;
+            var dy2:Number = Math.round(height/2) - dy1;
+            var dragRect:Rectangle = new Rectangle(dx1, dy1, dx2, dy2);
+            this.startDrag(false, dragRect);
         }
 
         // Отпустили кнопку мыши
         function handleMouseUp(event:Event):void
         {
-            (this.parent as MovieClip).stopDrag();
+            this.stopDrag();
         }
 
         public function dropSeveralAsteroids():void
