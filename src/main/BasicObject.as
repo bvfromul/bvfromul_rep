@@ -3,13 +3,18 @@ package main
     import flash.display.MovieClip;
     import flash.events.Event;
     import flash.events.MouseEvent;
+    import flash.utils.setTimeout;
+    import flash.utils.clearTimeout;
 
     dynamic public class BasicObject extends MovieClip
     {
         public var radius:Number; // радиус
         public var sectors:Object;  // какие сектора пересекает объект
-        var tkHP:Number, mHP:Number; // текущий и максимальный уровни жизни
+        //var tkHP:Number; // текущий и максимальный уровни жизни
         var hp_mc:HPline;    // мувик полоски уровня жизни
+        var hideTimeout:Number = 1000; // id таймера на удаление полоски уровня жизни
+        var mHP:Number;
+        var tkHP:Number;
 
         public function BasicObject()
         {
@@ -79,6 +84,13 @@ package main
                 return;
             }
 
+            if (hideTimeout)
+            {
+                // выключить таймер на удаление полоски
+               clearTimeout(hideTimeout);
+               hideTimeout=0;
+             }
+
             if (!hp_mc)
             {
                 // плоска еще не создавалась
@@ -89,9 +101,10 @@ package main
             hp_mc.visible=true;
             // зная радиус объекта, располагаем полоску сверху
             hp_mc.width=radius*2;
-            hp_mc.x=-radius;
-            hp_mc.y=-radius-hp_mc.height;
-            hp_mc.gotoAndStop(Math.floor(tkHP/mHP*100)+1);    // уровень жизни в процентах
+            hp_mc.x=-radius*2;
+            hp_mc.y = -radius * 2 - hp_mc.height - 10;
+            trace(Math.floor(tkHP / mHP * 100));
+            this.hp_mc.gotoAndStop(Math.floor(tkHP/mHP*100)+1);    // уровень жизни в процентах
         }
 
         // Убирает информацию об объекте
@@ -103,7 +116,22 @@ package main
                 return;
             }
 
+            if (!hideTimeout)
+            {
+                hideTimeout=setTimeout(hideInfoNow, 1000);
+            }
+
             hp_mc.visible=false; // прячем
+        }
+
+        // Немедленно убирает полоску уровня жизни
+        public function hideInfoNow():void
+        {
+            if (hp_mc)
+            {
+                hp_mc.visible=false; // прячем
+            }
+            hideTimeout=0;
         }
 
         // set/get для текущего уровня жизни

@@ -120,6 +120,8 @@ package main
                                     // столкнулись
                                    // делаем отскок
                                    resolve(obj, obj2);
+                                   obj.tkHP = obj.tkHP -10;
+                                   obj2.tkHP = obj2.tkHP -10;
                             }
                         }
                     }

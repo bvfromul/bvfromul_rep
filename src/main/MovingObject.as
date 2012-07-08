@@ -14,14 +14,14 @@ package main
 
         public function MovingObject()
         {
-            var num:Number;
-            num = Math.floor(Math.random()*totalFrames)+1; // выбираем случайный кадр
-            gotoAndStop(num); // и переходим на него
+            var num:Number = Math.floor(Math.random() * (this.bg.totalFrames - 1)) + 1; // случайный кадр
+            this.bg.gotoAndStop(num); // и переходим на него
             velocity = new Vector_h(); // создаем вектор
             // вычислим наш радиус, основываясь на размере картинки
-            radius = Math.floor((width + height) / 4);
+            radius = Math.floor((this.bg.width + this.bg.height) / 4);
             // зададим случайное направление вращения
-            rot = 2*(Math.random()-0.5);
+            rot = 2 * (Math.random() - 0.5);
+            tkHP = mHP = 100;
         }
 
         // Вбросить объект рядом с указанной точкой x1:y1 и двигаться к x2:y2
@@ -42,7 +42,7 @@ package main
         {
             x += velocity.x;
             y += velocity.y;
-            rotation += rot; // и немного повернуться
+            this.bg.rotation += rot; // и немного повернуться
         }
     }
 }
