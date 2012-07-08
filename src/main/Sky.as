@@ -8,17 +8,22 @@ package main
 
     dynamic public class Sky extends MovieClip
     {
-        var MIN_DROP:Number, MAX_DROP:Number; // пределы количества вбрасываемых астероидов
-        var all_moving:Array; // здесь все движущиеся объекты
-        var all_sectors:Object;      // сектора со ссылками на объекты в них
+        var MIN_DROP:Number, MAX_DROP:Number;   // пределы количества вбрасываемых астероидов
+        var all_moving:Array;                   // здесь все движущиеся объекты
+        var all_sectors:Object;                 // сектора со ссылками на объекты в них
+        private var coordinates:Object;         // координаты для дрега фона
 
         public function Sky()
         {
             all_moving = [];
-            all_sectors = {};
+            all_sectors = { };
+            coordinates = {};
             // сколько астероидов вбрасывается
             // это не константы, т.к. со временем количество астероидов должно увеличиваться
             MIN_DROP=5; MAX_DROP=10;
+
+            //получаем координаты области для дрега фона
+            getDragAreaSize();
 
             // Перехватываем нажатие кнопки мыши по нашему мувику
             addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
@@ -31,14 +36,18 @@ package main
             dropSeveralAsteroids();
         }
 
+        private function getDragAreaSize()
+        {
+            coordinates.dx1 = stage.stageWidth-Math.round((width-50)/2);
+            coordinates.dy1 = stage.stageHeight-Math.round(height/2);
+            coordinates.dx2 = Math.round((width-50)/2) - coordinates.dx1;
+            coordinates.dy2 = Math.round(height / 2) - coordinates.dy1;
+        }
+
         // Нажатие кнопки мыши по нашему мувику
         function handleMouseDown(event:Event):void
         {
-            var dx1:Number = stage.stageWidth-Math.round((width-50)/2);
-            var dy1:Number = stage.stageHeight-Math.round(height/2);
-            var dx2:Number = Math.round((width-50)/2) - dx1;
-            var dy2:Number = Math.round(height/2) - dy1;
-            var dragRect:Rectangle = new Rectangle(dx1, dy1, dx2, dy2);
+            var dragRect:Rectangle = new Rectangle(coordinates.dx1, coordinates.dy1, coordinates.dx2, coordinates.dy2);
             this.startDrag(false, dragRect);
         }
 
