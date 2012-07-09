@@ -38,9 +38,9 @@ package main
 
         private function getDragAreaSize()
         {
-            coordinates.dx1 = stage.stageWidth-Math.round((width-100)/2);
+            coordinates.dx1 = stage.stageWidth-Math.round((width-127)/2);
             coordinates.dy1 = stage.stageHeight-Math.round((height-50)/2);
-            coordinates.dx2 = Math.round((width-100)/2) - coordinates.dx1;
+            coordinates.dx2 = Math.round((width-127)/2) - coordinates.dx1;
             coordinates.dy2 = Math.round((height-50) / 2) - coordinates.dy1;
         }
 
@@ -93,46 +93,89 @@ package main
 
         public function update(event : Event):void
         {
-            var zone:String, obj2:MovingObject;
+            var zone:String, obj2:MovingObject, i:Number, fragment:SmallAsteroid, ex_mc:Explosion;
             // Проходим по всему массиву созданных объектов
             // и заставляем каждого сдвинуться в своем направлении
             for each (var obj:MovingObject in all_moving)
             {
-                // перед тем, как сдвинуться удалим запись об этом объекте из секторов
-                for (zone in obj.sectors)
+                if (obj.hp>0)
                 {
-                    delete all_sectors[zone][obj.name];
-                }
+                    if (obj.x<(-width-400) || obj.x>(width+400) || obj.y<(-height-400) || obj.y>(height+400))
+                    {
+                        obj.hp = 0;
+                    }
 
-                // смещаемся
-               obj.move();
-               // Просим пересчитать в какие сектора попал объект
-               obj.calcSectors();
-               // Проверяем столкновения со всеми объектами, которые есть в новых секторах
-               for (zone in obj.sectors)
-               {
-                    if (all_sectors[zone])
-                    {  // такой сектор есть
-                        for each (obj2 in all_sectors[zone])
-                        { // проверяем на столкновение
-                            if (obj.checkCollision(obj2))
-                            {
-                                    // столкнулись
-                                   // делаем отскок
-                                   resolve(obj, obj2);
-                                   obj.hp = obj.hp -15;
-                                   obj2.hp = obj2.hp -15;
+                    if (obj.velocity.x!=0 && obj.velocity.y!=0 && Math.abs(obj.velocity.x)<0.4 && Math.abs(obj.velocity.y)<0.4)
+                    {
+                        obj.velocity.mulScalar(1.5); // увеличиваем скорость
+                    }
+
+                    // перед тем, как сдвинуться удалим запись об этом объекте из секторов
+                    for (zone in obj.sectors)
+                    {
+                        delete all_sectors[zone][obj.name];
+                    }
+
+                    // смещаемся
+                   obj.move();
+                   // Просим пересчитать в какие сектора попал объект
+                   obj.calcSectors();
+                   // Проверяем столкновения со всеми объектами, которые есть в новых секторах
+                   for (zone in obj.sectors)
+                   {
+                        if (all_sectors[zone])
+                        {  // такой сектор есть
+                            for each (obj2 in all_sectors[zone])
+                            { // проверяем на столкновение
+                                if (obj.checkCollision(obj2))
+                                {
+                                        // столкнулись
+                                       // делаем отскок
+                                       resolve(obj, obj2);
+                                       obj.hp = obj.hp -15;
+                                       obj2.hp = obj2.hp -15;
+                                }
                             }
                         }
+                        else
+                        {
+                            // нет такого сектора
+                            all_sectors[zone] = {}; // теперь будет
+                        }
+
+                        // регистрируемся в этом секторе
+                        all_sectors[zone][obj.name]=obj;
                     }
-                    else
+                }
+                else
+                {
+                    // удаляем объект из списка живых
+                    for (i = 0; i < all_moving.length; i++)
                     {
-                        // нет такого сектора
-                        all_sectors[zone] = {}; // теперь будет
+                        if (all_moving[i] == obj)
+                        {
+                            all_moving.splice(i,1);
+                            break;
+                        }
                     }
 
-                    // регистрируемся в этом секторе
-                    all_sectors[zone][obj.name]=obj;
+                    // аттачим несколько случайных осколков (5-15)
+                    i = Math.max(5, Math.floor(Math.random()*15));
+                    while (i--)
+                    {
+                        fragment = new SmallAsteroid(); // создаем новый осколок
+                        fragment.init(obj);     // инициализация параметров
+                        addChild(fragment);     // добавляем его на наш мувиклип
+                    }
+
+                    // аттачим мувик взрыва
+                    ex_mc = new Explosion();
+                    ex_mc.init(obj);
+                    addChild(ex_mc);
+                    // удаляем сам мувик астероида
+                    removeChild(obj);
+                    // учитываем влияние ударной волны взрыва на другие объекты
+                    addExplosion(obj.x, obj.y, obj.getMassa());
                 }
             }
         }
@@ -187,6 +230,47 @@ package main
             v.mulScalar((0.1+min_distance-distance)/distance);
             ball1.x += v.x;
             ball1.y += v.y;
+        }
+
+        // Оттолкнуть объекты находящиееся в радиусе взрыва
+        // сила взрыва эквивалентна массе астероида
+        function addExplosion(x:Number, y:Number, massa:Number)
+        {
+            var i:Number, j:Number; //названия сектора i_j
+            var obj:BasicObject, s:String;
+            var v:Vector_h;
+            // т.к. один астероид может пересекать несколько секторов
+            // для того, чтобы его несколько раз не просчитать
+            // записываем уже просчитанные астероиды в "one"
+            var one:Object = {};
+
+            // считаем, что радиус влияния равен массе взорвавшегося объекта
+            // пробегаемся по всем секторам, которые пересекает радиус влияния взрыва
+            for (i = Math.floor((x - massa) / 100); i <= Math.floor((x + massa) / 100); i++)
+            {
+                for (j = Math.floor((y - massa) / 100); j <= Math.floor((y + massa) / 100); j++)
+                {
+                    // название сектора
+                    s = i+"_"+j;
+                    for each (obj in all_sectors[s])
+                    {
+                        // все объекты в секторе
+                        if (! one[obj.name])
+                        {
+                            // этот объект еще не просчитывали
+                            // создаем вектор до объекта
+                            v = new Vector_h(obj.x - x, obj.y - y);
+                            // Высчитываем длину вектора воздействия
+                            // Уменьшение с расстоянием и нужно учесть разность масс
+                            v.mulScalar(100/v.magnitude2() * (massa/obj.getMassa())/2);
+                            // прибавляем вектор воздействия взрыва к вектору движения объекта
+                            obj.velocity.addVector(v);
+                            // запомним, что этот объект просчитали
+                            one[obj.name]=true;
+                        }
+                    }
+                }
+            }
         }
     }
 }
