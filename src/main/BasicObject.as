@@ -5,6 +5,7 @@ package main
     import flash.events.MouseEvent;
     import flash.utils.setTimeout;
     import flash.utils.clearTimeout;
+    import flash.filters.GlowFilter;
 
     dynamic public class BasicObject extends MovieClip
     {
@@ -18,6 +19,10 @@ package main
 
         public function BasicObject()
         {
+            hp_mc = new HPline(); // создаем мувик полоски жизни
+            hideInfo();
+            addChild(hp_mc); // добавим
+
             addEventListener(MouseEvent.MOUSE_OVER, showInfo);// при наведении мышки - показать
             addEventListener(MouseEvent.MOUSE_OUT, hideInfo); // при уходе мышки - убрать
         }
@@ -91,19 +96,11 @@ package main
                hideTimeout=0;
              }
 
-            if (!hp_mc)
-            {
-                // плоска еще не создавалась
-                hp_mc = new HPline(); // создаем мувик полоски жизни
-                addChild(hp_mc); // добавим
-            }
-
             hp_mc.visible=true;
             // зная радиус объекта, располагаем полоску сверху
-            hp_mc.width=radius*2;
+
             hp_mc.x=-radius*2;
             hp_mc.y = -radius * 2 - hp_mc.height - 10;
-            trace(Math.floor(tkHP / mHP * 100));
             this.hp_mc.gotoAndStop(Math.floor(tkHP/mHP*100)+1);    // уровень жизни в процентах
         }
 
@@ -135,7 +132,7 @@ package main
         }
 
         // set/get для текущего уровня жизни
-        public function set hp(newHP:Number) :void
+        public function set hp(newHP:Number):void
         {
             tkHP=Math.max(0, newHP); // уровень жизни не может быть меньше нуля
             if (hp_mc && hp_mc.visible)
@@ -143,6 +140,7 @@ package main
                 // нарисована полоска уровня жизни
                 showInfo(); // нужно обновить информацию
             }
+            showCriticalHP();
         }
 
         public function get hp():Number
@@ -164,6 +162,39 @@ package main
         public function get maxHP():Number
         {
             return mHP;
+        }
+
+        // Включает красную подсветку, если уровень жизни критический <33%
+        function showCriticalHP():void
+        {
+            var percent:Number;
+            if (!mHP)
+            {
+                // не установлен maxHP
+                return;
+            }
+
+            percent = hp / mHP; // процент уровня жизни 0..1
+            if (percent >= 0.33)
+            {
+                // уровень жизни не критический
+                return;
+            }
+
+            // уровень жизни критический
+            // создаем свечение, яркость которого (alpha) зависит от процента HP
+            var myFilters:Array = [];
+            myFilters.push(new GlowFilter(0xFF0000, 1-percent*3, 18,18));
+            if (this["bg"])
+            {
+                // если есть фоновая картинка, то подсвечиваем ее
+                this.bg.filters = myFilters;
+            }
+            else
+            {
+                // иначе объект целиком
+                filters = myFilters;
+            }
         }
     }
 }

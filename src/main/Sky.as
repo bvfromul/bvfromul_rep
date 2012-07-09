@@ -38,10 +38,10 @@ package main
 
         private function getDragAreaSize()
         {
-            coordinates.dx1 = stage.stageWidth-Math.round((width-50)/2);
-            coordinates.dy1 = stage.stageHeight-Math.round(height/2);
-            coordinates.dx2 = Math.round((width-50)/2) - coordinates.dx1;
-            coordinates.dy2 = Math.round(height / 2) - coordinates.dy1;
+            coordinates.dx1 = stage.stageWidth-Math.round((width-100)/2);
+            coordinates.dy1 = stage.stageHeight-Math.round((height-50)/2);
+            coordinates.dx2 = Math.round((width-100)/2) - coordinates.dx1;
+            coordinates.dy2 = Math.round((height-50) / 2) - coordinates.dy1;
         }
 
         // Нажатие кнопки мыши по нашему мувику
@@ -120,8 +120,8 @@ package main
                                     // столкнулись
                                    // делаем отскок
                                    resolve(obj, obj2);
-                                   obj.tkHP = obj.tkHP -10;
-                                   obj2.tkHP = obj2.tkHP -10;
+                                   obj.hp = obj.hp -15;
+                                   obj2.hp = obj2.hp -15;
                             }
                         }
                     }
