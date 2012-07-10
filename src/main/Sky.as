@@ -134,6 +134,16 @@ package main
                                        resolve(obj, obj2);
                                        obj.hp = obj.hp -15;
                                        obj2.hp = obj2.hp -15;
+trace(obj.name, obj2.name)
+                                       if (obj2.name == 'earth')
+                                       {
+                                            obj.hp=0; // взрыв
+
+                                            // на его место аттачим "падающий" астероид
+                                            var f:AsteroidFall = new AsteroidFall();
+                                            f.init(obj, this.earth);
+                                            addChild(f);
+                                        }
                                 }
                             }
                         }
