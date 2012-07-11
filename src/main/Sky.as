@@ -17,7 +17,8 @@ package main
         {
             all_moving = [];
             all_sectors = { };
-            coordinates = {};
+            coordinates = { };
+            var zone:String;
             // сколько астероидов вбрасывается
             // это не константы, т.к. со временем количество астероидов должно увеличиваться
             MIN_DROP=5; MAX_DROP=10;
@@ -34,6 +35,18 @@ package main
             addEventListener(Event.ENTER_FRAME, update);
             // тестовый вброс
             dropSeveralAsteroids();
+            all_moving.push(this.earth);
+            this.earth.calcSectors();
+            // добавим в эти сектора ссылку на объект
+            for (zone in this.earth.sectors)
+            {
+                if (!all_sectors[zone])
+                {
+                    // такого сектора еще не было, создадим
+                    all_sectors[zone] = {};
+                }
+                all_sectors[zone][this.earth.name] = this.earth;
+            }
         }
 
         private function getDragAreaSize()
@@ -96,7 +109,7 @@ package main
             var zone:String, obj2:MovingObject, i:Number, fragment:SmallAsteroid, ex_mc:Explosion;
             // Проходим по всему массиву созданных объектов
             // и заставляем каждого сдвинуться в своем направлении
-            for each (var obj:MovingObject in all_moving)
+            for each (var obj:BasicObject in all_moving)
             {
                 if (obj.hp>0)
                 {
@@ -129,20 +142,24 @@ package main
                             { // проверяем на столкновение
                                 if (obj.checkCollision(obj2))
                                 {
-                                        // столкнулись
-                                       // делаем отскок
-                                       resolve(obj, obj2);
-                                       obj.hp = obj.hp -15;
-                                       obj2.hp = obj2.hp -15;
-trace(obj.name, obj2.name)
+
                                        if (obj2.name == 'earth')
                                        {
-                                            obj.hp=0; // взрыв
+                                           trace('yes');
+                                           obj.hp=0; // взрыв
 
                                             // на его место аттачим "падающий" астероид
                                             var f:AsteroidFall = new AsteroidFall();
                                             f.init(obj, this.earth);
                                             addChild(f);
+                                        }
+                                        else
+                                        {
+                                               // столкнулись
+                                               // делаем отскок
+                                               resolve(obj, obj2);
+                                               obj.hp = obj.hp -15;
+                                               obj2.hp = obj2.hp -15;
                                         }
                                 }
                             }
@@ -190,7 +207,7 @@ trace(obj.name, obj2.name)
             }
         }
 
-        function resolve(ball1:MovingObject, ball2:MovingObject):void
+        function resolve(ball1:BasicObject, ball2:BasicObject):void
         {
             var b1Velocity:Vector_h = ball1.velocity;
             var b2Velocity:Vector_h = ball2.velocity;
@@ -231,7 +248,7 @@ trace(obj.name, obj2.name)
         }
 
         // Отодвигает шарик 1 от шарика 2, чтобы они не пересекались
-        function pullBalls(ball1:MovingObject, ball2:MovingObject):void
+        function pullBalls(ball1:BasicObject, ball2:BasicObject):void
         {
             var v:Vector_h = new Vector_h(ball1.x-ball2.x, ball1.y-ball2.y);
             var distance:Number = v.magnitude();

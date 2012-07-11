@@ -8,10 +8,10 @@ package main
         public var velocity:Vector_h; // вектор движения
         public var rot:Number; // направление вращения
         var earth_obj:BasicObject; // ссылка на планету
-        var this_obj:MovingObject;
+        var this_obj:BasicObject;
 
         // ссылка на астероид и на планету
-        public function init(obj:MovingObject, earth:BasicObject)
+        public function init(obj:BasicObject, earth:BasicObject)
         {
             // копируем вектор движения
             velocity = new Vector_h();
