@@ -55,7 +55,6 @@ package main
             if (scaleX < 0.1)
             {
                 // совсем маленький, пора прекращать движение и рисовать взрыв
-                trace(this_obj.radius);
                 earth_obj.hp-=2*this_obj.radius; // уменьшим HP земли, дамаг пропорционален нашему размеру
                 removeEventListener(Event.ENTER_FRAME, move);
                 gotoAndPlay(2);

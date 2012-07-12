@@ -106,103 +106,108 @@ package main
 
         public function update(event : Event):void
         {
-            var zone:String, obj2:MovingObject, i:Number, fragment:SmallAsteroid, ex_mc:Explosion;
+            var zone:String, obj2:BasicObject, i:Number, fragment:SmallAsteroid, ex_mc:Explosion;
             // Проходим по всему массиву созданных объектов
             // и заставляем каждого сдвинуться в своем направлении
             for each (var obj:BasicObject in all_moving)
             {
-                if (obj.hp>0)
+                if (obj.name != 'earth')
                 {
-                    if (obj.x<(-width-400) || obj.x>(width+400) || obj.y<(-height-400) || obj.y>(height+400))
+                    if (obj.hp>0)
                     {
-                        obj.hp = 0;
-                    }
+                        if (obj.x<(-width-400) || obj.x>(width+400) || obj.y<(-height-400) || obj.y>(height+400))
+                        {
+                            obj.hp = 0;
+                        }
 
-                    if (obj.velocity.x!=0 && obj.velocity.y!=0 && Math.abs(obj.velocity.x)<0.4 && Math.abs(obj.velocity.y)<0.4)
-                    {
-                        obj.velocity.mulScalar(1.5); // увеличиваем скорость
-                    }
+                        if (obj.velocity.x!=0 && obj.velocity.y!=0 && Math.abs(obj.velocity.x)<0.4 && Math.abs(obj.velocity.y)<0.4)
+                        {
+                            obj.velocity.mulScalar(1.5); // увеличиваем скорость
+                        }
 
-                    // перед тем, как сдвинуться удалим запись об этом объекте из секторов
-                    for (zone in obj.sectors)
-                    {
-                        delete all_sectors[zone][obj.name];
-                    }
+                        // перед тем, как сдвинуться удалим запись об этом объекте из секторов
+                        for (zone in obj.sectors)
+                        {
+                            delete all_sectors[zone][obj.name];
+                        }
 
-                    // смещаемся
-                   obj.move();
-                   // Просим пересчитать в какие сектора попал объект
-                   obj.calcSectors();
-                   // Проверяем столкновения со всеми объектами, которые есть в новых секторах
-                   for (zone in obj.sectors)
-                   {
-                        if (all_sectors[zone])
-                        {  // такой сектор есть
-                            for each (obj2 in all_sectors[zone])
-                            { // проверяем на столкновение
-                                if (obj.checkCollision(obj2))
-                                {
+                        // смещаемся
+                       obj.move();
+                       // Просим пересчитать в какие сектора попал объект
+                       obj.calcSectors();
+                       // Проверяем столкновения со всеми объектами, которые есть в новых секторах
+                       for (zone in obj.sectors)
+                       {
+                            if (all_sectors[zone])
+                            {  // такой сектор есть
+                                for each (obj2 in all_sectors[zone])
+                                { // проверяем на столкновение
+                                    if (obj.checkCollision(obj2))
+                                    {
 
-                                       if (obj2.name == 'earth')
-                                       {
-                                           trace('yes');
-                                           obj.hp=0; // взрыв
+                                           if (obj2.name == 'earth')
+                                           {
+                                              // trace('yes');
+                                               obj.hp=0; // взрыв
 
-                                            // на его место аттачим "падающий" астероид
-                                            var f:AsteroidFall = new AsteroidFall();
-                                            f.init(obj, this.earth);
-                                            addChild(f);
-                                        }
-                                        else
-                                        {
-                                               // столкнулись
-                                               // делаем отскок
-                                               resolve(obj, obj2);
-                                               obj.hp = obj.hp -15;
-                                               obj2.hp = obj2.hp -15;
-                                        }
+                                                // на его место аттачим "падающий" астероид
+                                                var f:AsteroidFall = new AsteroidFall();
+                                                f.init(obj, this.earth);
+                                                addChild(f);
+                                            }
+                                            else
+                                            {
+                                                   // столкнулись
+                                                   // делаем отскок
+                                                   resolve(obj, obj2);
+                                                   obj.hp = obj.hp -15;
+                                                   obj2.hp = obj2.hp -15;
+                                            }
+                                    }
                                 }
                             }
-                        }
-                        else
-                        {
-                            // нет такого сектора
-                            all_sectors[zone] = {}; // теперь будет
-                        }
+                            else
+                            {
+                                // нет такого сектора
+                                all_sectors[zone] = {}; // теперь будет
+                            }
 
-                        // регистрируемся в этом секторе
-                        all_sectors[zone][obj.name]=obj;
+                            // регистрируемся в этом секторе
+                            all_sectors[zone][obj.name]=obj;
+                        }
                     }
-                }
-                else
-                {
-                    // удаляем объект из списка живых
-                    for (i = 0; i < all_moving.length; i++)
+                    else
                     {
-                        if (all_moving[i] == obj)
+                        // удаляем объект из списка живых
+                        for (i = 0; i < all_moving.length; i++)
                         {
-                            all_moving.splice(i,1);
-                            break;
+                            if (all_moving[i] == obj)
+                            {
+                                all_moving.splice(i,1);
+                                break;
+                            }
                         }
-                    }
 
-                    // аттачим несколько случайных осколков (5-15)
-                    i = Math.max(5, Math.floor(Math.random()*15));
-                    while (i--)
-                    {
-                        fragment = new SmallAsteroid(); // создаем новый осколок
-                        fragment.init(obj);     // инициализация параметров
-                        addChild(fragment);     // добавляем его на наш мувиклип
-                    }
 
-                    // аттачим мувик взрыва
-                    ex_mc = new Explosion();
-                    ex_mc.init(obj);
-                    addChild(ex_mc);
-                    // удаляем сам мувик астероида
-                    removeChild(obj);
-                    // учитываем влияние ударной волны взрыва на другие объекты
-                    addExplosion(obj.x, obj.y, obj.getMassa());
+                            // аттачим несколько случайных осколков (5-15)
+                            i = Math.max(5, Math.floor(Math.random()*15));
+                            while (i--)
+                            {
+                                fragment = new SmallAsteroid(); // создаем новый осколок
+                                fragment.init(obj);     // инициализация параметров
+                                addChild(fragment);     // добавляем его на наш мувиклип
+                            }
+
+                            // аттачим мувик взрыва
+                            ex_mc = new Explosion();
+                            ex_mc.init(obj);
+                            addChild(ex_mc);
+                            // удаляем сам мувик астероида
+                            removeChild(obj);
+                            // учитываем влияние ударной волны взрыва на другие объекты
+                            addExplosion(obj.x, obj.y, obj.getMassa());
+
+                    }
                 }
             }
         }
@@ -282,7 +287,7 @@ package main
                     for each (obj in all_sectors[s])
                     {
                         // все объекты в секторе
-                        if (! one[obj.name])
+                        if ((! one[obj.name]) && (obj.name != 'earth'))
                         {
                             // этот объект еще не просчитывали
                             // создаем вектор до объекта
