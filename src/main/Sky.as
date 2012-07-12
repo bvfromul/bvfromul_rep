@@ -11,20 +11,20 @@ package main
         var MIN_DROP:Number, MAX_DROP:Number;   // пределы количества вбрасываемых астероидов
         var all_moving:Array;                   // здесь все движущиеся объекты
         var all_sectors:Object;                 // сектора со ссылками на объекты в них
-        private var coordinates:Object;         // координаты для дрега фона
+        private var first_size:Object;          // первоначальныеразмеры флешки
 
         public function Sky()
         {
             all_moving = [];
             all_sectors = { };
-            coordinates = { };
+            first_size = { };
             var zone:String;
             // сколько астероидов вбрасывается
             // это не константы, т.к. со временем количество астероидов должно увеличиваться
             MIN_DROP=5; MAX_DROP=10;
 
             //получаем координаты области для дрега фона
-            getDragAreaSize();
+            getFirstSize();
 
             // Перехватываем нажатие кнопки мыши по нашему мувику
             addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
@@ -49,18 +49,22 @@ package main
             }
         }
 
-        private function getDragAreaSize()
+        private function getFirstSize()
         {
-            coordinates.dx1 = stage.stageWidth-Math.round((width-127)/2);
-            coordinates.dy1 = stage.stageHeight-Math.round((height-50)/2);
-            coordinates.dx2 = Math.round((width-127)/2) - coordinates.dx1;
-            coordinates.dy2 = Math.round((height-50) / 2) - coordinates.dy1;
+            first_size.width = Math.round((width - 127) / 2);
+            first_size.height = Math.round((height-50)/2);
         }
 
         // Нажатие кнопки мыши по нашему мувику
         function handleMouseDown(event:Event):void
         {
-            var dragRect:Rectangle = new Rectangle(coordinates.dx1, coordinates.dy1, coordinates.dx2, coordinates.dy2);
+            var dx1:Number = stage.stageWidth-first_size.width;
+            var dy1:Number = stage.stageHeight-first_size.height;
+            var dx2:Number = first_size.width - dx1;
+            var dy2:Number = first_size.height - dy1;
+
+            var dragRect:Rectangle = new Rectangle(dx1, dy1, dx2, dy2);
+
             this.startDrag(false, dragRect);
         }
 
@@ -107,6 +111,7 @@ package main
         public function update(event : Event):void
         {
             var zone:String, obj2:BasicObject, i:Number, fragment:SmallAsteroid, ex_mc:Explosion;
+            var needupdate:Boolean;
             // Проходим по всему массиву созданных объектов
             // и заставляем каждого сдвинуться в своем направлении
             for each (var obj:BasicObject in all_moving)
@@ -206,10 +211,21 @@ package main
                             removeChild(obj);
                             // учитываем влияние ударной волны взрыва на другие объекты
                             addExplosion(obj.x, obj.y, obj.getMassa());
-
+                            needupdate=true;
                     }
                 }
             }
+
+            if (needupdate)
+            {
+                // обновить статистику
+                doUpdateStatistic();
+            }
+        }
+
+        // Генерит событие "нужно обновить статистику"
+        public function doUpdateStatistic() {
+             dispatchEvent(new Event("UPDATE_STATISTIC"));
         }
 
         function resolve(ball1:BasicObject, ball2:BasicObject):void
