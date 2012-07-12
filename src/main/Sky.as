@@ -26,6 +26,14 @@ package main
             //получаем координаты области для дрега фона
             getFirstSize();
 
+            //добавляем панельку
+            var panel:Panel;
+            panel = new Panel(this);
+            panel.x = 0;
+            panel.y = 60;
+            stage.addChild(panel);
+
+
             // Перехватываем нажатие кнопки мыши по нашему мувику
             addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
             // Отпускание мышки

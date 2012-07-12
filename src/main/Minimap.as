@@ -11,12 +11,12 @@ package main
         var xscale:Number, yscale:Number; // масштаб карты
         var bg:Sprite;   // здесь все рисуем
 
-        public function Minimap()
+        public function Minimap(sky:Sky)
         {
-            sky_mc = root.Sky;
+            sky_mc = sky;
             // вычислим масштаб
-            xscale = width/sky_mc.bg.width;
-            yscale = height/sky_mc.bg.height;
+            xscale = width/sky_mc.sky.width;
+            yscale = height/sky_mc.sky.height;
             // Создаем слой на котором будем все рисовать
             bg = new Sprite;
             addChild(bg);
