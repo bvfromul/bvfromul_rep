@@ -59,18 +59,17 @@ package main
 
         private function getFirstSize()
         {
-            first_size.width = Math.round((width - 127) / 2);
-            first_size.height = Math.round((height-50)/2);
+            first_size.width = Math.round((width - 50) / 2);
+            first_size.height = Math.round((height-118)/2);
         }
 
         // Нажатие кнопки мыши по нашему мувику
         function handleMouseDown(event:Event):void
         {
-            var dx1:Number = stage.stageWidth-first_size.width;
-            var dy1:Number = stage.stageHeight-first_size.height;
-            var dx2:Number = first_size.width - dx1;
-            var dy2:Number = first_size.height - dy1;
-
+            var dx1:Number = stage.stageWidth-Math.round((this.sky.width) / 2);
+            var dy1:Number = stage.stageHeight-Math.round(this.sky.height/2);
+            var dx2:Number = Math.round((this.sky.width ) / 2) - dx1;
+            var dy2:Number = Math.round(this.sky.height/2) - dy1;
             var dragRect:Rectangle = new Rectangle(dx1, dy1, dx2, dy2);
 
             this.startDrag(false, dragRect);
@@ -160,7 +159,6 @@ package main
 
                                            if (obj2.name == 'earth')
                                            {
-                                              // trace('yes');
                                                obj.hp=0; // взрыв
 
                                                 // на его место аттачим "падающий" астероид
