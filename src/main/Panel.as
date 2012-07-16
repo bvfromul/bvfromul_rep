@@ -21,17 +21,20 @@ package main
             minimap.y = 369;
             this.addChild(minimap);
 
+            this.ascteroids_label.text = sky_mc.all_moving.length > 1 ? String(sky_mc.all_moving.length - 1) : "0";
+            this.earths_label.text = sky_mc.earth.hp.toString();
+            this.earth_hp.gotoAndStop(Math.floor(sky_mc.earth.hp/sky_mc.earth.maxHP*100)+1);
         }
 
         // обновить статистику
         public function update(event:Event):void
         {
             // Количество астероидов в игре (один объект в all_moving – это сама земля)
-            this.ascteroids_label.text = sky_mc.all_moving.length>1 ? String(sky_mc.all_moving.length-1) : "";
+            this.ascteroids_label.text = sky_mc.all_moving.length>1 ? String(sky_mc.all_moving.length-1) : "0";
             // Уровень жизни земли
-            //this.earths_label.text = String(sky_mc.earth.hp);
+            this.earths_label.text = sky_mc.earth.hp.toString();
             // Прогресбар уровня жизни земли
-            //this.earth_hp.gotoAndStop(Math.floor(sky_mc.earth.hp/sky_mc.earth.maxHP*100)+1);
+            this.earth_hp.gotoAndStop(Math.floor(sky_mc.earth.hp/sky_mc.earth.maxHP*100)+1);
         }
     }
 }

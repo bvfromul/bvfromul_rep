@@ -11,27 +11,17 @@ package main
         var MIN_DROP:Number, MAX_DROP:Number;   // пределы количества вбрасываемых астероидов
         var all_moving:Array;                   // здесь все движущиеся объекты
         var all_sectors:Object;                 // сектора со ссылками на объекты в них
-        private var first_size:Object;          // первоначальныеразмеры флешки
 
         public function Sky()
         {
             all_moving = [];
             all_sectors = { };
-            first_size = { };
             var zone:String;
             // сколько астероидов вбрасывается
             // это не константы, т.к. со временем количество астероидов должно увеличиваться
             MIN_DROP=5; MAX_DROP=10;
 
             //получаем координаты области для дрега фона
-            getFirstSize();
-
-            //добавляем панельку
-            var panel:Panel;
-            panel = new Panel(this);
-            panel.x = 0;
-            panel.y = 60;
-            stage.addChild(panel);
 
 
             // Перехватываем нажатие кнопки мыши по нашему мувику
@@ -45,6 +35,15 @@ package main
             dropSeveralAsteroids();
             all_moving.push(this.earth);
             this.earth.calcSectors();
+            this.earth.tkHP = this.earth.mHP = 100;
+
+            //добавляем панельку
+            var panel:Panel;
+            panel = new Panel(this);
+            panel.x = 0;
+            panel.y = 60;
+            stage.addChild(panel);
+
             // добавим в эти сектора ссылку на объект
             for (zone in this.earth.sectors)
             {
@@ -55,12 +54,6 @@ package main
                 }
                 all_sectors[zone][this.earth.name] = this.earth;
             }
-        }
-
-        private function getFirstSize()
-        {
-            first_size.width = Math.round((width - 50) / 2);
-            first_size.height = Math.round((height-118)/2);
         }
 
         // Нажатие кнопки мыши по нашему мувику
@@ -127,9 +120,11 @@ package main
                 {
                     if (obj.hp>0)
                     {
-                        if (obj.x<(-width-400) || obj.x>(width+400) || obj.y<(-height-400) || obj.y>(height+400))
+                        if (obj.x<(-width/2) || obj.x>(width/2) || obj.y<(-height/2) || obj.y>(height/2))
                         {
-                            obj.hp = 0;
+                            deleteFromObjList(obj);
+                            removeChild(obj);
+                            needupdate=true;
                         }
 
                         if (obj.velocity.x!=0 && obj.velocity.y!=0 && Math.abs(obj.velocity.x)<0.4 && Math.abs(obj.velocity.y)<0.4)
@@ -157,23 +152,27 @@ package main
                                     if (obj.checkCollision(obj2))
                                     {
 
-                                           if (obj2.name == 'earth')
-                                           {
-                                               obj.hp=0; // взрыв
+                                       if (obj2.name == 'earth')
+                                       {
+                                           deleteFromObjList(obj);
+                                           removeChild(obj);
 
-                                                // на его место аттачим "падающий" астероид
-                                                var f:AsteroidFall = new AsteroidFall();
-                                                f.init(obj, this.earth);
-                                                addChild(f);
-                                            }
-                                            else
-                                            {
-                                                   // столкнулись
-                                                   // делаем отскок
-                                                   resolve(obj, obj2);
-                                                   obj.hp = obj.hp -15;
-                                                   obj2.hp = obj2.hp -15;
-                                            }
+                                            // на его место аттачим "падающий" астероид
+                                            var f:AsteroidFall = new AsteroidFall();
+                                            f.init(obj, this.earth);
+                                            addChild(f);
+                                            obj2.hp -= obj.radius;
+
+                                            needupdate=true;
+                                        }
+                                        else
+                                        {
+                                            // столкнулись
+                                            // делаем отскок
+                                            resolve(obj, obj2);
+                                            obj.hp -=15;
+                                            obj2.hp -=15;
+                                        }
                                     }
                                 }
                             }
@@ -190,34 +189,26 @@ package main
                     else
                     {
                         // удаляем объект из списка живых
-                        for (i = 0; i < all_moving.length; i++)
+                        deleteFromObjList(obj);
+
+                        // аттачим несколько случайных осколков (5-15)
+                        i = Math.max(5, Math.floor(Math.random()*15));
+                        while (i--)
                         {
-                            if (all_moving[i] == obj)
-                            {
-                                all_moving.splice(i,1);
-                                break;
-                            }
+                            fragment = new SmallAsteroid(); // создаем новый осколок
+                            fragment.init(obj);     // инициализация параметров
+                            addChild(fragment);     // добавляем его на наш мувиклип
                         }
 
-
-                            // аттачим несколько случайных осколков (5-15)
-                            i = Math.max(5, Math.floor(Math.random()*15));
-                            while (i--)
-                            {
-                                fragment = new SmallAsteroid(); // создаем новый осколок
-                                fragment.init(obj);     // инициализация параметров
-                                addChild(fragment);     // добавляем его на наш мувиклип
-                            }
-
-                            // аттачим мувик взрыва
-                            ex_mc = new Explosion();
-                            ex_mc.init(obj);
-                            addChild(ex_mc);
-                            // удаляем сам мувик астероида
-                            removeChild(obj);
-                            // учитываем влияние ударной волны взрыва на другие объекты
-                            addExplosion(obj.x, obj.y, obj.getMassa());
-                            needupdate=true;
+                        // аттачим мувик взрыва
+                        ex_mc = new Explosion();
+                        ex_mc.init(obj);
+                        addChild(ex_mc);
+                        // удаляем сам мувик астероида
+                        removeChild(obj);
+                        // учитываем влияние ударной волны взрыва на другие объекты
+                        addExplosion(obj.x, obj.y, obj.getMassa());
+                        needupdate=true;
                     }
                 }
             }
@@ -229,9 +220,23 @@ package main
             }
         }
 
+        // удаляет объект из списка живых
+        private function deleteFromObjList(obj:Object)
+        {
+            var counter:Number;
+            for (counter = 0; counter < all_moving.length; counter++)
+            {
+                if (all_moving[counter] == obj)
+                {
+                    all_moving.splice(counter,1);
+                    break;
+                }
+            }
+        }
+
         // Генерит событие "нужно обновить статистику"
         public function doUpdateStatistic() {
-             dispatchEvent(new Event("UPDATE_STATISTIC"));
+            dispatchEvent(new Event("UPDATE_STATISTIC"));
         }
 
         function resolve(ball1:BasicObject, ball2:BasicObject):void
