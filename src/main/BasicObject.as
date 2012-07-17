@@ -99,8 +99,8 @@ package main
             hp_mc.visible=true;
             // зная радиус объекта, располагаем полоску сверху
 
-            hp_mc.x=-radius*2;
-            hp_mc.y = -radius * 2 - hp_mc.height - 10;
+            hp_mc.x=-radius/2+hp_mc.width/4;
+            hp_mc.y = -radius-20;
             this.hp_mc.gotoAndStop(Math.floor(tkHP/mHP*100)+1);    // уровень жизни в процентах
         }
 
