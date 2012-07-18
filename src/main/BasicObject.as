@@ -11,11 +11,13 @@ package main
     {
         public var radius:Number; // радиус
         public var sectors:Object;  // какие сектора пересекает объект
+        public var velocity:Vector_h;   // вектор движения
         //var tkHP:Number; // текущий и максимальный уровни жизни
         var hp_mc:HPline;    // мувик полоски уровня жизни
         var hideTimeout:Number = 1000; // id таймера на удаление полоски уровня жизни
         var mHP:Number;
         var tkHP:Number;
+
 
         public function BasicObject()
         {
@@ -52,7 +54,7 @@ package main
             return (d2 < dr*dr);
         }
 
-        function getMassa():Number
+        public function getMassa():Number
         {
             var r:Number = radius;
             return (4/3*Math.PI*r*r*r)/100;       // масса шара
@@ -195,6 +197,12 @@ package main
                 // иначе объект целиком
                 filters = myFilters;
             }
+        }
+
+        // Переместить объект. Переопределяется в двигающихся наследниках
+        public function move():void
+        {
+
         }
     }
 }

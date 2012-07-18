@@ -33,8 +33,8 @@ package main
             addEventListener(Event.ENTER_FRAME, update);
             // тестовый вброс
             dropSeveralAsteroids();
-            all_moving.push(this.earth);
-            this.earth.calcSectors();
+            addObjectInSectors(this.earth);
+
             this.earth.tkHP = this.earth.mHP = 100;
 
             //добавляем панельку
@@ -43,17 +43,6 @@ package main
             panel.x = 0;
             panel.y = 60;
             stage.addChild(panel);
-
-            // добавим в эти сектора ссылку на объект
-            for (zone in this.earth.sectors)
-            {
-                if (!all_sectors[zone])
-                {
-                    // такого сектора еще не было, создадим
-                    all_sectors[zone] = {};
-                }
-                all_sectors[zone][this.earth.name] = this.earth;
-            }
         }
 
         // Нажатие кнопки мыши по нашему мувику
@@ -80,7 +69,6 @@ package main
             var x2:Number, y2:Number; // куда двигаться
             var cnt:Number;    // количество вбрасываемых встероидов
             var new_asteroid:MovingObject; // объект астероида
-            var zone:String;
 
             x1=-500; y1=-310; // пока так, для теста, из левого верхнего угла
             x2=this.earth.x; y2=this.earth.y; // двигаться к земле
@@ -90,21 +78,9 @@ package main
             {
                 new_asteroid = new MovingObject();     // создаем новый астероид
                 addChild(new_asteroid);           // добавляем его на наш мувиклип
-                all_moving.push(new_asteroid);    // запоминаем в массиве
                 new_asteroid.drop(x1, y1, x2, y2);  // бросаем
 
-                // Просим пересчитать в какие сектора попал объект
-                new_asteroid.calcSectors();
-                // добавим в эти сектора ссылку на объект
-                for (zone in new_asteroid.sectors)
-                {
-                    if (!all_sectors[zone])
-                    {
-                        // такого сектора еще не было, создадим
-                        all_sectors[zone] = {};
-                    }
-                    all_sectors[zone][new_asteroid.name] = new_asteroid;
-                }
+                addObjectInSectors(new_asteroid);
             }
         }
 
@@ -220,6 +196,23 @@ package main
             }
         }
 
+        //добавляет ссылку на объект в секторах
+        private function addObjectInSectors(obj:BasicObject)
+        {
+            var zone:String;
+            all_moving.push(obj);
+            obj.calcSectors();
+            for (zone in obj.sectors)
+            {
+                if (!all_sectors[zone])
+                {
+                    // такого сектора еще не было, создадим
+                    all_sectors[zone] = {};
+                }
+                all_sectors[zone][obj.name] = obj;
+            }
+        }
+
         // удаляет объект из списка живых
         private function deleteFromObjList(obj:Object)
         {
@@ -330,6 +323,59 @@ package main
                     }
                 }
             }
+        }
+
+        // Добавить турель в игру
+        public function addTurret(x:Number, y:Number, turret_type:Number)
+        {
+            var obj:TurretObject;
+            if (turret_type == 1)
+            {
+                obj = new TurretLaser();
+            }
+
+            // зададим координаты
+            obj.x = x;
+            obj.y = y;
+            addChild(obj);  // добавляем на наш мувиклип
+
+            // теперь двигаем турель так, чтобы она не пересекалась ни с одинм объектом на поле
+            var check_again:Boolean;
+            var cnt:Number=0;
+            var s:String, obj2:BasicObject;
+            do
+            {
+                check_again=false;
+                // Просим пересчитать в какие сектора попала турель
+                obj.CalcSectors();
+                for (s in obj.sectors)
+                {
+                    if (!check_again)
+                    {
+                        // еще не обнаружили столкновение
+                        // проверяем на столкновение со всеми объектами в секторе
+                        for each (obj2 in all_sectors[s])
+                        {
+                            if (obj.CheckCollision(obj2))
+                            {
+                                // столкнулись
+                                // отодвинем, чтобы не пересекались
+                                pullBalls(obj, obj2);
+                                // проверяем на столкновения повторно
+                                check_again=true;
+                                // турель сдвинута, дальше проверять эти сектора нет смысла
+                                break;
+                            }
+                        }
+                    }
+                }
+                cnt++;
+             } while (check_again);
+             // Разместили турель так, что она ни с кем не пересекается
+
+            addObjectInSectors(obj);
+            // обновить статистику
+            doUpdateStatistic();
         }
     }
 }

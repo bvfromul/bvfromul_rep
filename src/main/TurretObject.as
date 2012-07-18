@@ -11,10 +11,12 @@ package main
         public var turret_type :Number;               // тип турели: 1-лазерная, 2-ракетная
         public var trgt        :BasicObject;         // цель
         var weapon_recharge:Number;                   // счетчик перезарядки пушки
+        var velocitySlowdown:Number = 0.91;	// коэффициент уменьшения скорости
+        var findBigObjects:Boolean;	// приоритенее объекты с большим кол-вом уровни жизни (для турелей)
 
         public function TurretObject()
         {
-            type=3; // тип объекта "турель"
+            turret_type=3; // тип объекта "турель"
             // вычислим наш радиус, основываясь на размере картинки
             radius = Math.floor((this.bg.width+this.bg.height)/4);
             // запустим процесс зарядки пушки
@@ -35,7 +37,7 @@ package main
             // "гасим" скорость, турель пытается удержаться на своей позиции
             if (Math.abs(velocity.x)>0.4) velocity.x *= velocitySlowdown;
             else velocity.x=0;
-            if (Math.abs(velocity.y)>0.4) velocity.y *= elocitySlowdown;
+            if (Math.abs(velocity.y)>0.4) velocity.y *= velocitySlowdown;
             else velocity.y=0;
 
             // перезарядка пушки
@@ -89,7 +91,7 @@ package main
                         if (Math.abs(angle)<=5 && weapon_recharge>=max_weapon_recharge)
                         {
                             // пушка наведена на цель и заряжена
-                            Fire();	// ПЛИИИИИИ!!!!!
+                            fire();	// ПЛИИИИИИ!!!!!
                         }
                     }
                 }
@@ -97,7 +99,7 @@ package main
             if (! trgt && trgt_radius > 0)
             {
                 // нужно искать новую цель
-                FindTarget();
+                findTarget();
             }
         }
 
@@ -117,7 +119,7 @@ package main
                 {
                     // название сектора
                     s = i+"_"+j;
-                    for each (obj in parent.all_sectors[s])
+                    for each (obj in (parent as Sky).all_sectors[s])
                     {
                         // все объекты в секторе
                         if ((obj.name != 'earth') && obj.hp > 0)
@@ -131,7 +133,7 @@ package main
                             // добавим скорость
                             v.addVector(obj.velocity);
                             // оцениваем по расстоянию до объекта, плюс HP
-                            if (FindBigObjects)
+                            if (findBigObjects)
                             {
                                 // приоритенее "толстые" объекты
                                 o.len = v.magnitude() - obj.maxHP;
@@ -173,8 +175,10 @@ package main
         }
 
         // при убирании информации об объекте нужно стереть круг
-        override public function HideInfoNow():void
+        override public function hideInfoNow():void
         {
             graphics.clear();
             super.HideInfoNow();
         }
+    }
+}

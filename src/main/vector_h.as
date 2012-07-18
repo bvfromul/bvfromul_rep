@@ -80,5 +80,11 @@ package main
         function getMulScalar( i:Number ):Vector_h {
             return new Vector_h(x*i, y*i);
         }
+
+        // угол в градусах
+        function getDirection():Number
+        {
+            return Math.atan2(y, x)/Math.PI*180;
+        }
     }
 }
