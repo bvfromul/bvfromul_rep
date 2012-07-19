@@ -347,7 +347,7 @@ package main
             {
                 check_again=false;
                 // Просим пересчитать в какие сектора попала турель
-                obj.CalcSectors();
+                obj.calcSectors();
                 for (s in obj.sectors)
                 {
                     if (!check_again)
@@ -356,7 +356,7 @@ package main
                         // проверяем на столкновение со всеми объектами в секторе
                         for each (obj2 in all_sectors[s])
                         {
-                            if (obj.CheckCollision(obj2))
+                            if (obj.checkCollision(obj2))
                             {
                                 // столкнулись
                                 // отодвинем, чтобы не пересекались

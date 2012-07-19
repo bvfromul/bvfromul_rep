@@ -171,14 +171,14 @@ package main
             graphics.lineStyle(3, 0x0000FF, 0.3);
             graphics.drawCircle(0,0, trgt_radius);
             // вызываем функцию ShowInfo предка
-            super.ShowInfo(e);
+            super.showInfo(e);
         }
 
         // при убирании информации об объекте нужно стереть круг
         override public function hideInfoNow():void
         {
             graphics.clear();
-            super.HideInfoNow();
+            super.hideInfoNow();
         }
     }
 }
