@@ -12,6 +12,7 @@ package main
         public var radius:Number; // радиус
         public var sectors:Object;  // какие сектора пересекает объект
         public var velocity:Vector_h;   // вектор движения
+        public var type;
         //var tkHP:Number; // текущий и максимальный уровни жизни
         var hp_mc:HPline;    // мувик полоски уровня жизни
         var hideTimeout:Number = 1000; // id таймера на удаление полоски уровня жизни

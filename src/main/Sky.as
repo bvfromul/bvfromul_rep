@@ -77,6 +77,7 @@ package main
             while (cnt--)
             {
                 new_asteroid = new MovingObject();     // создаем новый астероид
+                new_asteroid.type = "asteroid";
                 addChild(new_asteroid);           // добавляем его на наш мувиклип
                 new_asteroid.drop(x1, y1, x2, y2);  // бросаем
 
@@ -92,7 +93,7 @@ package main
             // и заставляем каждого сдвинуться в своем направлении
             for each (var obj:BasicObject in all_moving)
             {
-                if (obj.name != 'earth')
+                if (obj.type == 'asteroid')
                 {
                     if (obj.hp>0)
                     {
