@@ -25,7 +25,7 @@ package main
             hp_mc = new HPline(); // создаем мувик полоски жизни
             hideInfo();
             addChild(hp_mc); // добавим
-
+            velocity = new Vector_h(); // создаем вектор
             addEventListener(MouseEvent.MOUSE_OVER, showInfo);// при наведении мышки - показать
             addEventListener(MouseEvent.MOUSE_OUT, hideInfo); // при уходе мышки - убрать
         }

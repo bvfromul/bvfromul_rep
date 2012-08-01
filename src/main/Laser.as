@@ -13,6 +13,7 @@ package main
         // ссылка на турель и на астероид
         public function init(turret:TurretObject, asteroid:BasicObject)
         {
+            //trace('init');
             var x2:Number, y2:Number;
             var v:Vector_h;
             my_asteroid = asteroid; // запоминаем ссылку на астероид

@@ -10,7 +10,7 @@ package main
             turret_type = 1; // тип турели - лазерная
             trgt_radius = 200; // радиус поражения целей 2 сектора
             hp=maxHP=50; // уровень жизни маленький
-            max_weapon_recharge=21; // время перезаряда пушки - одна секунда (21 кадр)
+            max_weapon_recharge=10; // время перезаряда пушки - одна секунда (21 кадр)
         }
 
         // Выстрел по цели trgt
@@ -20,7 +20,7 @@ package main
             var ls:Laser = new Laser();
             ls.init(this, trgt);
             // добавляем на главный мувик sky _под_ всеми объектами
-            parent.addChildAt(ls, 2);
+            parent.addChild(ls);
             // снимаем HP у цели
             trgt.hp -= 20;
             // запустить процесс перезарядки пушки
@@ -31,14 +31,6 @@ package main
         override public function getMassa():Number
         {
             return 100;
-        }
-
-        public function remove():void
-        {
-            if (parent)
-            {
-                parent.removeChild(this);
-            }
         }
     }
 }

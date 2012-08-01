@@ -93,6 +93,8 @@ package main
             // и заставляем каждого сдвинуться в своем направлении
             for each (var obj:BasicObject in all_moving)
             {
+                // смещаемся
+                obj.move();
                 if (obj.type == 'asteroid')
                 {
                     if (obj.hp>0)
@@ -115,8 +117,7 @@ package main
                             delete all_sectors[zone][obj.name];
                         }
 
-                        // смещаемся
-                       obj.move();
+
                        // Просим пересчитать в какие сектора попал объект
                        obj.calcSectors();
                        // Проверяем столкновения со всеми объектами, которые есть в новых секторах

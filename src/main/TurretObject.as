@@ -122,7 +122,7 @@ package main
                     for each (obj in (parent as Sky).all_sectors[s])
                     {
                         // все объекты в секторе
-                        if ((obj.name != 'earth') && obj.hp > 0)
+                        if ((obj.type == 'asteroid') && (obj.hp > 0))
                         {
                             // нас интересуют только "живые" астероиды
                             // получим основные характеристики для выбора
@@ -179,6 +179,14 @@ package main
         {
             graphics.clear();
             super.hideInfoNow();
+        }
+
+        public function remove():void
+        {
+            if (parent)
+            {
+                parent.removeChild(this);
+            }
         }
     }
 }
