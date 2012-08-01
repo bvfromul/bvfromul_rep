@@ -9,11 +9,14 @@ package main
 
         public function init(obj:BasicObject)
         {
-            // ссылка на взорвавшийся объект
-            velocity = new Vector_h();
-            // вектор движения взрыва тот же, что и у астероида
-            velocity.copyVector(obj.velocity);
-            velocity.mulScalar(1/2); // только чуть медленней
+            if (obj.velocity)
+            {
+                // ссылка на взорвавшийся объект
+                velocity = new Vector_h();
+                // вектор движения взрыва тот же, что и у астероида
+                velocity.copyVector(obj.velocity);
+                velocity.mulScalar(1 / 2); // только чуть медленней
+            }
             // позиция из центра астероида
             x = obj.x;
             y = obj.y;
@@ -23,7 +26,10 @@ package main
             // взорвавшемуся объекту
             scaleX=scaleY=2*obj.radius/40;
             // двигаемся самостоятельно
-            addEventListener(Event.ENTER_FRAME, move);
+            if (obj.velocity)
+            {
+                addEventListener(Event.ENTER_FRAME, move);
+            }
         }
 
         // Переместиться

@@ -32,5 +32,13 @@ package main
         {
             return 100;
         }
+
+        public function remove():void
+        {
+            if (parent)
+            {
+                parent.removeChild(this);
+            }
+        }
     }
 }

@@ -142,13 +142,27 @@ package main
 
                                             needupdate=true;
                                         }
-                                        else
+                                        else if(obj2.type == 'asteroid')
                                         {
                                             // столкнулись
                                             // делаем отскок
                                             resolve(obj, obj2);
                                             obj.hp -=15;
                                             obj2.hp -=15;
+                                        }
+                                        else
+                                        {
+                                            pullBalls(obj, obj2);
+                                            obj.hp -=15;
+                                            obj2.hp -= 15;
+                                            if ((obj2.type == 'turret') && (obj2.hp <= 0))
+                                            {
+                                                // аттачим мувик взрыва
+                                                ex_mc = new Explosion();
+                                                ex_mc.init(obj2);
+                                                addChild(ex_mc);
+                                                obj2.remove();
+                                            }
                                         }
                                     }
                                 }
@@ -308,7 +322,7 @@ package main
                     for each (obj in all_sectors[s])
                     {
                         // все объекты в секторе
-                        if ((! one[obj.name]) && (obj.name != 'earth'))
+                        if ((! one[obj.name]) && (obj.type == 'asteroid'))
                         {
                             // этот объект еще не просчитывали
                             // создаем вектор до объекта
@@ -338,6 +352,7 @@ package main
             // зададим координаты
             obj.x = x;
             obj.y = y;
+            obj.type = 'turret';
             addChild(obj);  // добавляем на наш мувиклип
 
             // теперь двигаем турель так, чтобы она не пересекалась ни с одинм объектом на поле
