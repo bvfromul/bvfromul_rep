@@ -163,6 +163,7 @@ package main
                                                 ex_mc.init(obj2);
                                                 addChild(ex_mc);
                                                 obj2.remove();
+                                                deleteFromObjList(obj2);
                                             }
                                         }
                                     }
