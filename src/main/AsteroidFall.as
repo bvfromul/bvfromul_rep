@@ -55,7 +55,8 @@ package main
             if (scaleX < 0.1)
             {
                 // совсем маленький, пора прекращать движение и рисовать взрыв
-                //earth_obj.hp -= this_obj.radius; // уменьшим HP земли, дамаг пропорционален нашему размеру
+                earth_obj.hp -= this_obj.radius; // уменьшим HP земли, дамаг пропорционален нашему размеру
+                dispatchEvent(new Event("CHANGE_EARTH_HP"));
                 removeEventListener(Event.ENTER_FRAME, move);
                 gotoAndPlay(2);
                 scaleX=scaleY=1;

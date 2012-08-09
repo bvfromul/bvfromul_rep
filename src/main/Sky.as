@@ -136,12 +136,10 @@ package main
                                            removeChild(obj);
 
                                             // на его место аттачим "падающий" астероид
-                                            var f:AsteroidFall = new AsteroidFall();
-                                            f.init(obj, this.earth);
-                                            addChild(f);
-                                            obj2.hp -= obj.radius;
-
-                                            needupdate=true;
+                                            var asteroidFall:AsteroidFall = new AsteroidFall();
+                                            asteroidFall.init(obj, this.earth);
+                                            addChild(asteroidFall);
+                                            asteroidFall.addEventListener("CHANGE_EARTH_HP", doUpdateStatistic);
                                         }
                                         else if(obj2.type == 'asteroid')
                                         {
@@ -245,7 +243,8 @@ package main
         }
 
         // Генерит событие "нужно обновить статистику"
-        public function doUpdateStatistic() {
+        public function doUpdateStatistic(event:Event = undefined)
+        {
             dispatchEvent(new Event("UPDATE_STATISTIC"));
         }
 

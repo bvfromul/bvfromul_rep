@@ -165,13 +165,13 @@ package main
 
         // Переопределяем функцию отображения информации об объекте
         // добавим в турель показ зоны поражения
-        override public function showInfo(e:Event = undefined):void
+        override public function showInfo(event:Event = undefined):void
         {
             graphics.clear();
             graphics.lineStyle(3, 0x0000FF, 0.3);
             graphics.drawCircle(0,0, trgt_radius);
             // вызываем функцию ShowInfo предка
-            super.showInfo(e);
+            super.showInfo(event);
         }
 
         // при убирании информации об объекте нужно стереть круг
