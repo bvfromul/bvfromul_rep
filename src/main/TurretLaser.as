@@ -17,10 +17,10 @@ package main
         override public function fire():void
         {
             // создаем лазерный луч до цели
-            var ls:Laser = new Laser();
-            ls.init(this, trgt);
+            var laser:Laser = new Laser();
+            laser.init(this, trgt);
             // добавляем на главный мувик sky _под_ всеми объектами
-            parent.addChild(ls);
+            parent.addChild(laser);
             // снимаем HP у цели
             trgt.hp -= 20;
             // запустить процесс перезарядки пушки

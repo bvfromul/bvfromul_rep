@@ -34,7 +34,7 @@ package main
                 // запомним координаты, чтобы после перетаскивания вернуть на место
                 this["t"+i].old_x = this["t"+i].x;
                 this["t"+i].old_y = this["t"+i].y;
-                this["t"+i].HP = this["t"+i].maxHP = 0; // нет полоски с HP
+                this["t"+i].hp = this["t"+i].maxHP = 0; // нет полоски с HP
                 // для перетаскивания перехватываем нажатие и отпускание кнопки мышки
                 this["t"+i].addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
                 this["t"+i].addEventListener(MouseEvent.MOUSE_UP, handleMouseUp);

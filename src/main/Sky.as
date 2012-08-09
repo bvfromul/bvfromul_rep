@@ -352,9 +352,15 @@ package main
         public function addTurret(x:Number, y:Number, turret_type:Number)
         {
             var obj:TurretObject;
-            if (turret_type == 1)
+            switch(turret_type)
             {
-                obj = new TurretLaser();
+                case 1:
+                    obj = new TurretLaser();
+                break;
+
+                case 2:
+                    obj = new TurretRocket();
+                break;
             }
 
             // зададим координаты
