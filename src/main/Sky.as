@@ -289,7 +289,7 @@ package main
         }
 
         // Отодвигает шарик 1 от шарика 2, чтобы они не пересекались
-        function pullBalls(ball1:BasicObject, ball2:BasicObject):void
+        function pullBalls(ball1:BasicObject, ball2:BasicObject, add_random:Number=0):void
         {
             var v:Vector_h = new Vector_h(ball1.x-ball2.x, ball1.y-ball2.y);
             var distance:Number = v.magnitude();
@@ -298,6 +298,13 @@ package main
             v.mulScalar((0.1+min_distance-distance)/distance);
             ball1.x += v.x;
             ball1.y += v.y;
+            // добавить небольшой рандом в положение ball1
+            if (add_random > 0)
+            {
+                ball1.velocity.addVector(v.getUnitVector());
+                ball1.x += (Math.random()-0.5)*add_random;
+                ball1.y += (Math.random()-0.5)*add_random;
+            }
         }
 
         // Оттолкнуть объекты находящиееся в радиусе взрыва
@@ -377,7 +384,7 @@ package main
                             {
                                 // столкнулись
                                 // отодвинем, чтобы не пересекались
-                                pullBalls(obj, obj2);
+                                pullBalls(obj, obj2, cnt);
                                 // проверяем на столкновения повторно
                                 check_again=true;
                                 // турель сдвинута, дальше проверять эти сектора нет смысла
