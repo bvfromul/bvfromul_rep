@@ -113,6 +113,7 @@ package main
             if (!(hp_mc && hp_mc.visible))
             {
                 // полоска не создана или не видна
+                hideTimeout = setTimeout(graphics.clear, 1000);
                 return;
             }
 
