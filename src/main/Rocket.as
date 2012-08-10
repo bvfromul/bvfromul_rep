@@ -13,7 +13,7 @@ package main {
         // ссылка на турель и на астероид
         public function init(turret:TurretObject, asteroid:BasicObject)
         {
-            type=4; // тип "ракета"
+            type='rocket'; // тип "ракета"
             // вычислим наш радиус, основываясь на размере картинки
             radius = Math.floor((width+height-4)/4);
             // добавляем себя рядом с турелью

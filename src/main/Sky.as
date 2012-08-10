@@ -36,6 +36,7 @@ package main
             addObjectInSectors(this.earth);
 
             this.earth.tkHP = this.earth.mHP = 100;
+            this.earth.type = 'earth';
 
             //добавляем панельку
             var panel:Panel;
@@ -70,7 +71,7 @@ package main
             var cnt:Number;    // количество вбрасываемых встероидов
             var new_asteroid:MovingObject; // объект астероида
 
-            x1=-500; y1=-310; // пока так, для теста, из левого верхнего угла
+            x1=-800; y1=-310; // пока так, для теста, из левого верхнего угла
             x2=this.earth.x; y2=this.earth.y; // двигаться к земле
             // выбираем рандомное количество
             cnt = MIN_DROP + Math.floor((MAX_DROP-MIN_DROP)*Math.random());
@@ -88,14 +89,13 @@ package main
         public function update(event : Event):void
         {
             var zone:String, obj2:BasicObject, i:Number, fragment:SmallAsteroid, ex_mc:Explosion;
-            var needupdate:Boolean;
             // Проходим по всему массиву созданных объектов
             // и заставляем каждого сдвинуться в своем направлении
             for each (var obj:BasicObject in all_moving)
             {
                 // смещаемся
                 obj.move();
-                if (obj.type == 'asteroid')
+                if (obj.type != 'earth')
                 {
                     if (obj.hp>0)
                     {
@@ -103,7 +103,6 @@ package main
                         {
                             deleteFromObjList(obj);
                             removeChild(obj);
-                            needupdate=true;
                         }
 
                         if (obj.velocity.x!=0 && obj.velocity.y!=0 && Math.abs(obj.velocity.x)<0.4 && Math.abs(obj.velocity.y)<0.4)
@@ -130,8 +129,9 @@ package main
                                     if (obj.checkCollision(obj2))
                                     {
 
-                                       if (obj2.name == 'earth')
+                                       if (obj2.type == 'earth' && obj.type == 'asteroid')
                                        {
+                                           obj.hp = 0;
                                            deleteFromObjList(obj);
                                            removeChild(obj);
 
@@ -149,20 +149,11 @@ package main
                                             obj.hp -=15;
                                             obj2.hp -=15;
                                         }
-                                        else
+                                        else if(obj2.type == 'turret')
                                         {
                                             pullBalls(obj, obj2);
                                             obj.hp -=15;
                                             obj2.hp -= 15;
-                                            if ((obj2.type == 'turret') && (obj2.hp <= 0))
-                                            {
-                                                // аттачим мувик взрыва
-                                                ex_mc = new Explosion();
-                                                ex_mc.init(obj2);
-                                                addChild(ex_mc);
-                                                obj2.remove();
-                                                deleteFromObjList(obj2);
-                                            }
                                         }
                                     }
                                 }
@@ -182,37 +173,37 @@ package main
                         // удаляем объект из списка живых
                         deleteFromObjList(obj);
 
-                        // аттачим несколько случайных осколков (5-15)
-                        i = Math.max(5, Math.floor(Math.random()*15));
-                        while (i--)
+                        if (obj.type == 'turret' || obj.type == 'rocket')
                         {
-                            fragment = new SmallAsteroid(); // создаем новый осколок
-                            fragment.init(obj);     // инициализация параметров
-                            addChild(fragment);     // добавляем его на наш мувиклип
+                            ex_mc = new ExplosionRocket();
                         }
+                        else
+                        {
+                            // аттачим несколько случайных осколков (5-15)
+                            i = Math.max(5, Math.floor(Math.random()*15));
+                            while (i--)
+                            {
+                                fragment = new SmallAsteroid(); // создаем новый осколок
+                                fragment.init(obj);     // инициализация параметров
+                                addChild(fragment);     // добавляем его на наш мувиклип
+                            }
 
-                        // аттачим мувик взрыва
-                        ex_mc = new Explosion();
+                            // аттачим мувик взрыва
+                            ex_mc = new ExplosionObject();
+                        }
                         ex_mc.init(obj);
                         addChild(ex_mc);
                         // удаляем сам мувик астероида
                         removeChild(obj);
                         // учитываем влияние ударной волны взрыва на другие объекты
                         addExplosion(obj.x, obj.y, obj.getMassa());
-                        needupdate=true;
                     }
                 }
-            }
-
-            if (needupdate)
-            {
-                // обновить статистику
-                doUpdateStatistic();
             }
         }
 
         //добавляет ссылку на объект в секторах
-        private function addObjectInSectors(obj:BasicObject)
+        public function addObjectInSectors(obj:BasicObject)
         {
             var zone:String;
             all_moving.push(obj);
@@ -240,10 +231,11 @@ package main
                     break;
                 }
             }
+            dispatchEvent(new Event("UPDATE_STATISTIC"));
         }
 
         // Генерит событие "нужно обновить статистику"
-        public function doUpdateStatistic(event:Event = undefined)
+        private function doUpdateStatistic(event:Event = undefined)
         {
             dispatchEvent(new Event("UPDATE_STATISTIC"));
         }

@@ -25,9 +25,9 @@ package main {
         {
             // создаем ракету
             var rocket:Rocket = new Rocket();
-            parent.addChild(rocket); // добавляем на главный мувик sky
+            (parent as Sky).addChild(rocket); // добавляем на главный мувик sky
             rocket.init(this, trgt);
-            parent.addChild(rocket);   // добавляем в сектора
+            (parent as Sky).addObjectInSectors(rocket);   // добавляем в сектора
             // запустить процесс перезарядки пушки
             weapon_recharge = 0;
             // звук выстрела
