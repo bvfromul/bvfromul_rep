@@ -353,6 +353,10 @@ package main
                 case 2:
                     obj = new TurretRocket();
                 break;
+
+                case 3:
+                    obj = new TurretBastion();
+                break;
             }
 
             // зададим координаты
