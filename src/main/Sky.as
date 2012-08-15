@@ -8,9 +8,14 @@ package main
 
     dynamic public class Sky extends MovieClip
     {
+        const INC_DROP:Number = 0.5;    // скорость увеличения количества астероидов
+        const FIRST_DROP:Number = 3;    // Сколько астероидов вбрасывается вначале
+
+        var DROP_CNT:Number;    // примерное количество вбрасываемых астероидов
         var MIN_DROP:Number, MAX_DROP:Number;   // пределы количества вбрасываемых астероидов
         var all_moving:Array;                   // здесь все движущиеся объекты
         var all_sectors:Object;                 // сектора со ссылками на объекты в них
+        var first_pause:Number; // неск. секунд в начале игры не бросаем астероиды
 
         public function Sky()
         {
@@ -21,7 +26,8 @@ package main
             // это не константы, т.к. со временем количество астероидов должно увеличиваться
             MIN_DROP=5; MAX_DROP=10;
 
-            //получаем координаты области для дрега фона
+            DROP_CNT = FIRST_DROP;
+            first_pause = 21*7; // пауза в начале игры
 
 
             // Перехватываем нажатие кнопки мыши по нашему мувику
@@ -71,24 +77,49 @@ package main
             var cnt:Number;    // количество вбрасываемых встероидов
             var new_asteroid:MovingObject; // объект астероида
 
+            x2=Math.floor(Math.random()*4); // с какой стороны влетают астероиды 0-слева,1-верх,2-справа,3-снизу
+            y2=Math.random()*2000; // местоположение не стороне
+           // x1=(x2==0?-100:(x2==1?y2:(x2==2?2100:y2)));
+         //   y1=(x2==0?y2:(x2==1?-100:(x2==2?y2:2100)));
             x1=-800; y1=-310; // пока так, для теста, из левого верхнего угла
             x2=this.earth.x; y2=this.earth.y; // двигаться к земле
             // выбираем рандомное количество
-            cnt = MIN_DROP + Math.floor((MAX_DROP-MIN_DROP)*Math.random());
+            cnt = Math.floor(DROP_CNT + (DROP_CNT / 3) * (Math.random() - 0.5)); // 30% рандом
+
+            if (all_moving.length + cnt > 10)
+            {
+                // ограничим макимальное количество астероидов в игре
+                cnt = 11-all_moving.length;
+            }
+            if (cnt <= 0)
+            {
+                // нечего добавлять
+                return;
+            }
+
             while (cnt--)
             {
                 new_asteroid = new MovingObject();     // создаем новый астероид
                 new_asteroid.type = "asteroid";
                 addChild(new_asteroid);           // добавляем его на наш мувиклип
-                new_asteroid.drop(x1, y1, x2, y2);  // бросаем
+                new_asteroid.drop(x1,y1,
+                    x2+(this.earth.radius*(Math.random()-0.5)*0.8),
+                    y2+(this.earth.radius*(Math.random()-0.5)*0.8)
+                );
 
                 addObjectInSectors(new_asteroid);
             }
+
+            // при следующем вбрасывании астероидов должно быть больше
+            DROP_CNT += INC_DROP;
+            // обновить статистику
+            doUpdateStatistic();
         }
 
         public function update(event : Event):void
         {
             var zone:String, obj2:BasicObject, i:Number, fragment:SmallAsteroid, ex_mc:Explosion;
+            var asteroid_count = 0;
             // Проходим по всему массиву созданных объектов
             // и заставляем каждого сдвинуться в своем направлении
             for each (var obj:BasicObject in all_moving)
@@ -99,6 +130,11 @@ package main
                 {
                     if (obj.hp>0)
                     {
+                        if (obj.type == 'asteroid')
+                        {
+                            asteroid_count++;
+                        }
+
                         if (obj.x<(-width/2) || obj.x>(width/2) || obj.y<(-height/2) || obj.y>(height/2))
                         {
                             deleteFromObjList(obj);
@@ -199,6 +235,12 @@ package main
                         addExplosion(obj.x, obj.y, obj.getMassa());
                     }
                 }
+            }
+
+            // если осталось мало астероидов, то вбрасываем еще
+            if (asteroid_count < DROP_CNT)
+            {
+                dropSeveralAsteroids();
             }
         }
 
