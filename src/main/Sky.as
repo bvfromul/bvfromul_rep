@@ -126,6 +126,7 @@ package main
             {
                 // смещаемся
                 obj.move();
+
                 if (obj.type != 'earth')
                 {
                     if (obj.hp>0)
@@ -137,8 +138,9 @@ package main
 
                         if (obj.x<(-width/2) || obj.x>(width/2) || obj.y<(-height/2) || obj.y>(height/2))
                         {
-                            deleteFromObjList(obj);
-                            removeChild(obj);
+                            obj.hp = 0;
+                            //deleteFromObjList(obj);
+                           // removeChild(obj);
                         }
 
                         if (obj.velocity.x!=0 && obj.velocity.y!=0 && Math.abs(obj.velocity.x)<0.4 && Math.abs(obj.velocity.y)<0.4)
@@ -183,7 +185,7 @@ package main
                                             // делаем отскок
                                             resolve(obj, obj2);
                                             obj.hp -=15;
-                                            obj2.hp -=15;
+                                            obj2.hp -= 15;
                                         }
                                         else if(obj2.type == 'turret')
                                         {
