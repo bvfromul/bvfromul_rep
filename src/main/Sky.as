@@ -129,6 +129,12 @@ package main
 
                 if (obj.type != 'earth')
                 {
+                    // перед тем, как сдвинуться удалим запись об этом объекте из секторов
+                    for (zone in obj.sectors)
+                    {
+                        delete all_sectors[zone][obj.name];
+                    }
+
                     if (obj.hp>0)
                     {
                         if (obj.type == 'asteroid')
@@ -139,21 +145,12 @@ package main
                         if (obj.x<(-width/2) || obj.x>(width/2) || obj.y<(-height/2) || obj.y>(height/2))
                         {
                             obj.hp = 0;
-                            //deleteFromObjList(obj);
-                           // removeChild(obj);
                         }
 
                         if (obj.velocity.x!=0 && obj.velocity.y!=0 && Math.abs(obj.velocity.x)<0.4 && Math.abs(obj.velocity.y)<0.4)
                         {
                             obj.velocity.mulScalar(1.5); // увеличиваем скорость
                         }
-
-                        // перед тем, как сдвинуться удалим запись об этом объекте из секторов
-                        for (zone in obj.sectors)
-                        {
-                            delete all_sectors[zone][obj.name];
-                        }
-
 
                        // Просим пересчитать в какие сектора попал объект
                        obj.calcSectors();
@@ -170,8 +167,6 @@ package main
                                        if (obj2.type == 'earth' && obj.type == 'asteroid')
                                        {
                                            obj.hp = 0;
-                                           deleteFromObjList(obj);
-                                           removeChild(obj);
 
                                             // на его место аттачим "падающий" астероид
                                             var asteroidFall:AsteroidFall = new AsteroidFall();
@@ -301,7 +296,7 @@ package main
                 pullBalls(ball2, ball1);
             }
 
-            var lineOfSight:Vector_h = new Vector_h(ball1.x-ball2.x, ball1.y-ball2.y);
+            var lineOfSight:Vector_h = new Vector_h(ball1.x - ball2.x, ball1.y - ball2.y);
             var v1Prime:Vector_h = b1Velocity.vectorProjectionOnto(lineOfSight);
             var v2Prime:Vector_h = b2Velocity.vectorProjectionOnto(lineOfSight);
 

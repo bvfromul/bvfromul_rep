@@ -35,16 +35,12 @@ package main
             var spd:Number = MIN_SPEED + (MAX_SPEED-MIN_SPEED)*Math.random();
             // приведем длину вектора к выбранной скорости
             velocity.mulScalar( spd / velocity.magnitude() );
-            trace(velocity.x, velocity.y, name);
         }
 
         override public function move():void
         {
-            var before_x = x; var before_y = y;
             x += velocity.x;
             y += velocity.y;
-            if (x == 0)
-                trace(before_x, before_y, velocity.x, velocity.y, x, y, name);
             this.bg.rotation += rot; // и немного повернуться
         }
     }
