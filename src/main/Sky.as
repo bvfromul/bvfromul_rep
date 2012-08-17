@@ -16,6 +16,7 @@ package main
         var all_moving:Array;                   // здесь все движущиеся объекты
         var all_sectors:Object;                 // сектора со ссылками на объекты в них
         var first_pause:Number; // неск. секунд в начале игры не бросаем астероиды
+        var panel:Panel;
 
         public function Sky()
         {
@@ -45,7 +46,6 @@ package main
             this.earth.type = 'earth';
 
             //добавляем панельку
-            var panel:Panel;
             panel = new Panel(this);
             panel.x = 0;
             panel.y = 60;
@@ -221,6 +221,7 @@ package main
                                 addChild(fragment);     // добавляем его на наш мувиклип
                             }
 
+                            panel.addPoints(obj.maxHP);
                             // аттачим мувик взрыва
                             ex_mc = new ExplosionObject();
                         }

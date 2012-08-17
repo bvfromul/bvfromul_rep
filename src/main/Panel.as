@@ -4,13 +4,24 @@ package main
     import flash.events.Event;
     import flash.events.MouseEvent;
     import main.Sky;
+    import flash.geom.ColorTransform;
 
     dynamic public class Panel extends Sprite
     {
+        const START_MONEY:Number = 30000; // сколько монет выдается в начале игры
+        public var score:Number;        // сколько игрок набрал очков
+        public var money:Number;        // сколько игрок имеет денег
+
+        private var kfMoney:Number;             // коэффициент HP/money
+        private var twinkling_cnt:Number;       // счетчик мерцания стоимости
+        private var twinkling_nm:String;        // для какой турели мерцает стоимость
         var sky_mc:Sky;  // ссылка на главный класс
 
         public function Panel(sky:Sky)
         {
+            kfMoney=10;
+            money=START_MONEY;
+            score=0;
             sky_mc = sky;
             // Обновляем статистику по событию от главного класса
             sky_mc.addEventListener("UPDATE_STATISTIC", update);
@@ -37,20 +48,95 @@ package main
                 this["t"+i].hp = this["t"+i].maxHP = 0; // нет полоски с HP
                 // для перетаскивания перехватываем нажатие и отпускание кнопки мышки
                 this["t"+i].addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
-                this["t"+i].addEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
+                this["t" + i].addEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
+                this["money_t"+i].text = this["t"+i].cost;
                 i++;  // переходим к следующей турели
             }
         }
 
         // обновить статистику
-        public function update(event:Event):void
+        public function update(event:Event=undefined):void
         {
             // Количество астероидов в игре (один объект в all_moving – это сама земля)
             this.ascteroids_label.text = sky_mc.all_moving.length>1 ? String(sky_mc.all_moving.length-1) : "0";
             // Уровень жизни земли
             this.earths_label.text = sky_mc.earth.hp.toString();
             // Прогресбар уровня жизни земли
-            this.earth_hp.gotoAndStop(Math.floor(sky_mc.earth.hp/sky_mc.earth.maxHP*100)+1);
+            this.earth_hp.gotoAndStop(Math.floor(sky_mc.earth.hp / sky_mc.earth.maxHP * 100) + 1);
+            // Счет
+            this.score_label.text = Math.floor(score).toString();
+            // деньги
+            this.money_label.text = money.toString();
+            // подсветим красным турели, которые сейчас нельзя поставить из-за нехватки денег
+            var i:Number = 1;
+            var ok:Boolean;
+            while (this["t" + i])
+            {
+                // есть такая турель
+                ok = this["t"+i].cost <= money;
+                this["t"+i].transform.colorTransform = new ColorTransform(1,1,1, 1, ok?0:200,0,0, 0);
+                this["money_t"+i].textColor = ok ? 0xFFFFFF : 0xFF0000;
+                i++;
+            }
+        }
+
+        // Добавляет очки
+        public function addPoints(asteroid_hp:Number):void
+        {
+            score += asteroid_hp/10;    // добавляем очки
+            money += Math.floor(asteroid_hp/kfMoney);   // и монеты
+            kfMoney+=0.01;  // чем больше цничтожается астероидов, тем меньше поступает монет
+            update();   // обновить статистику
+        }
+
+        // Вычитает монеты
+        public function decMoney(sum:Number):Boolean
+        {
+            if (sum > money)
+            {
+                // нет столько монет
+                return false;
+            }
+            money -= sum;
+            update();
+
+            return true;
+        }
+
+        // Мерцает стоимость указанной турели
+        function twinkling(nm:String):void
+        {
+            if (twinkling_cnt)
+            {
+                // уже что-то мерцает
+                stopTwinkling();    // прекращаем
+            }
+            twinkling_nm=nm;
+            twinkling_cnt=21;   // мерцаем секунду
+            // добавляем обработку события по ENTER_FRAME
+            addEventListener(Event.ENTER_FRAME, doTwinkling);
+        }
+
+        // функция мерцания
+        function doTwinkling(event:Event):void
+        {
+            if (--twinkling_cnt)
+            {
+                // еще мерцаем
+                this["money_"+twinkling_nm].visible = this.money_label.visible = !this.money_label.visible;
+            }
+            else
+            { // закончили
+                stopTwinkling();
+            }
+        }
+        // функция окончания мерцания
+        function stopTwinkling():void
+        {
+            // возвращаем видимость полей
+            this.money_label.visible = this["money_"+twinkling_nm].visible = true;
+            // удаляем событие
+            removeEventListener(Event.ENTER_FRAME, doTwinkling);
         }
 
         function handleMouseDown(event:Event):void
@@ -78,7 +164,18 @@ package main
             if (x > 100)
             {
                 // то добавим эту турель в игру
-                sky_mc.addTurret(x-sky_mc.x, y-sky_mc.y, event.currentTarget.turret_type);
+                if (decMoney(event.currentTarget.cost))
+                {
+                    // монет хватает
+                    sky_mc.addTurret(x - sky_mc.x, y - sky_mc.y, event.currentTarget.turret_type);
+                    //game_snd.Play2DSnd('addship', x-stage.stageWidth/2,y-stage.stageHeight/2);
+                }
+                else
+                {
+                    // недостаточно монет
+                    twinkling(event.currentTarget.name);
+                    //game_snd.Play2DSnd('error', 1,1);
+                }
             }
         }
     }

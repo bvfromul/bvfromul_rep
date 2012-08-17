@@ -16,7 +16,7 @@ package main {
             trgt_radius = TURRET_RADIUS;            // радиус поражения большой - целей 3.3 сектора
             hp = maxHP = TURRET_HP;                 // уровень жизни совсем маленький
             max_weapon_recharge=TURRET_RECHARGE;    // время перезаряда пушки - 3 секунды
-            //cost = TURRET_COST;                     // сколько стоит поставить эту турель
+            cost = TURRET_COST;                     // сколько стоит поставить эту турель
             findBigObjects = true;                  // приоритенее "толстые" объекты
         }
 

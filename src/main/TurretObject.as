@@ -10,6 +10,7 @@ package main
         public var max_weapon_recharge:Number;        // максимальное значение заряда пушки
         public var turret_type :Number;               // тип турели: 1-лазерная, 2-ракетная
         public var trgt        :BasicObject;         // цель
+        public var cost:Number;                     // сколько монет стоит эта турель
         var weapon_recharge:Number;                   // счетчик перезарядки пушки
         var velocitySlowdown:Number = 0.91;	// коэффициент уменьшения скорости
         var findBigObjects:Boolean;	// приоритенее объекты с большим кол-вом уровни жизни (для турелей)
