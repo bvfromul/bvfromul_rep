@@ -58,7 +58,7 @@ package main
         public function update(event:Event=undefined):void
         {
             // Количество астероидов в игре (один объект в all_moving – это сама земля)
-            this.ascteroids_label.text = sky_mc.all_moving.length>1 ? String(sky_mc.all_moving.length-1) : "0";
+            this.ascteroids_label.text = sky_mc.asteroid_count.toString();
             // Уровень жизни земли
             this.earths_label.text = sky_mc.earth.hp.toString();
             // Прогресбар уровня жизни земли

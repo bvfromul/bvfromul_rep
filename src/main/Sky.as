@@ -18,6 +18,8 @@ package main
         var first_pause:Number; // неск. секунд в начале игры не бросаем астероиды
         var panel:Panel;
 
+        var asteroid_count:Number = 0;
+
         public function Sky()
         {
             all_moving = [];
@@ -25,7 +27,7 @@ package main
             var zone:String;
             // сколько астероидов вбрасывается
             // это не константы, т.к. со временем количество астероидов должно увеличиваться
-            MIN_DROP=5; MAX_DROP=10;
+            MIN_DROP=1; MAX_DROP=7;
 
             DROP_CNT = FIRST_DROP;
             first_pause = 21*7; // пауза в начале игры
@@ -39,7 +41,7 @@ package main
 
             addEventListener(Event.ENTER_FRAME, update);
             // тестовый вброс
-            dropSeveralAsteroids();
+            dropSeveralAsteroids(asteroid_count);
             addObjectInSectors(this.earth);
 
             this.earth.tkHP = this.earth.mHP = 100;
@@ -70,26 +72,33 @@ package main
             this.stopDrag();
         }
 
-        public function dropSeveralAsteroids():void
+        public function dropSeveralAsteroids(curentCount: Number):void
         {
             var x1:Number, y1:Number; // точка вброса
             var x2:Number, y2:Number; // куда двигаться
             var cnt:Number;    // количество вбрасываемых встероидов
             var new_asteroid:MovingObject; // объект астероида
 
+            if (first_pause > 0)
+            {
+                // в начале игры пауза
+                first_pause--;
+                return;
+            }
+
             x2=Math.floor(Math.random()*4); // с какой стороны влетают астероиды 0-слева,1-верх,2-справа,3-снизу
             y2=Math.random()*2000; // местоположение не стороне
             x1=(x2==0?-100:(x2==1?y2:(x2==2?2100:y2)));
             y1 = (x2 == 0?y2:(x2 == 1? -100:(x2 == 2?y2:2100)));
             //x1=-800; y1=-310; // пока так, для теста, из левого верхнего угла
-            x2=this.earth.x; y2=this.earth.y; // двигаться к земле
+            x2 = this.earth.x; y2 = this.earth.y; // двигаться к земле
             // выбираем рандомное количество
             cnt = Math.floor(DROP_CNT + (DROP_CNT / 3) * (Math.random() - 0.5)); // 30% рандом
 
-            if (all_moving.length + cnt > 10)
+            if (curentCount + cnt > 10)
             {
                 // ограничим макимальное количество астероидов в игре
-                cnt = 11-all_moving.length;
+                cnt = 11-curentCount;
             }
             if (cnt <= 0)
             {
@@ -119,9 +128,9 @@ package main
         public function update(event : Event):void
         {
             var zone:String, obj2:BasicObject, i:Number, fragment:SmallAsteroid, ex_mc:Explosion;
-            var asteroid_count = 0;
             // Проходим по всему массиву созданных объектов
             // и заставляем каждого сдвинуться в своем направлении
+            asteroid_count = 0;
             for each (var obj:BasicObject in all_moving)
             {
                 // смещаемся
@@ -182,7 +191,7 @@ package main
                                             obj.hp -=15;
                                             obj2.hp -= 15;
                                         }
-                                        else if(obj2.type == 'turret')
+                                        else if(obj2.type == 'turret' && obj.type == 'asteroid')
                                         {
                                             pullBalls(obj, obj2);
                                             obj.hp -=15;
@@ -238,7 +247,7 @@ package main
             // если осталось мало астероидов, то вбрасываем еще
             if (asteroid_count < DROP_CNT)
             {
-                dropSeveralAsteroids();
+                dropSeveralAsteroids(asteroid_count);
             }
         }
 
