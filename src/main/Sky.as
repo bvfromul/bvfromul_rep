@@ -5,6 +5,7 @@ package main
     import main.MovingObject;
     import flash.geom.Rectangle;
     import flash.events.MouseEvent;
+    import main.GameOver;
 
     dynamic public class Sky extends MovieClip
     {
@@ -70,6 +71,19 @@ package main
         function handleMouseUp(event:Event):void
         {
             this.stopDrag();
+        }
+
+        // закончили
+        public function done():void {
+            removeEventListener(Event.ENTER_FRAME, update);
+            /*for each (var obj:BasicObject in all_moving)
+            {
+                removeChild(obj);
+            }*/
+            // прекращаем перетаскивания
+            //this.bg.handleMouseLeave();
+            // остановим фоновую музыку
+            //root.panel.volume_mc.bg_snd.stop();
         }
 
         public function dropSeveralAsteroids(curentCount: Number):void
@@ -175,13 +189,28 @@ package main
 
                                        if (obj2.type == 'earth' && obj.type == 'asteroid')
                                        {
-                                           obj.hp = 0;
+                                            if (obj2.hp > 0)
+                                            {
+                                               obj.hp = 0;
 
-                                            // на его место аттачим "падающий" астероид
-                                            var asteroidFall:AsteroidFall = new AsteroidFall();
-                                            asteroidFall.init(obj, this.earth);
-                                            addChild(asteroidFall);
-                                            asteroidFall.addEventListener("CHANGE_EARTH_HP", doUpdateStatistic);
+                                                // на его место аттачим "падающий" астероид
+                                                var asteroidFall:AsteroidFall = new AsteroidFall();
+                                                asteroidFall.init(obj, this.earth);
+                                                addChild(asteroidFall);
+                                                asteroidFall.addEventListener("CHANGE_EARTH_HP", doUpdateStatistic);
+                                            }
+                                            else
+                                            {
+                                                //ex_mc = new ExplosionObject();
+                                                //ex_mc.init(obj2);
+                                                //addChild(ex_mc);
+                                                //removeChild(obj2);
+
+                                                var gameOverMovieClip:GameOver = new GameOver();
+                                                MovieClip(root).addChild(gameOverMovieClip);
+                                                gameOverMovieClip.init(this);
+                                                //root.panel.PlaySnd('EarthCrash', obj);
+                                            }
                                         }
                                         else if(obj2.type == 'asteroid')
                                         {
