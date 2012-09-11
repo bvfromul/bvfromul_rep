@@ -224,7 +224,8 @@ package main
 
                                        if (obj2.type == 'earth' && obj.type == 'asteroid')
                                        {
-                                            if (obj2.hp > 0)
+                                            obj2.hp = 0;
+                                           if (obj2.hp > 0)
                                             {
                                                obj.hp = 0;
 
@@ -243,7 +244,9 @@ package main
 
                                                 var gameOverMovieClip:GameOver = new GameOver();
                                                 MovieClip(root).addChild(gameOverMovieClip);
+                                                trace(1);
                                                 gameOverMovieClip.init(this);
+                                                trace(2);
                                                 //root.panel.PlaySnd('EarthCrash', obj);
                                             }
                                         }
