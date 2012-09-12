@@ -11,6 +11,7 @@ package main
         const START_MONEY:Number = 30000; // сколько монет выдается в начале игры
         public var score:Number;        // сколько игрок набрал очков
         public var money:Number;        // сколько игрок имеет денег
+        public var minimap:Minimap;
 
         private var kfMoney:Number;             // коэффициент HP/money
         private var twinkling_cnt:Number;       // счетчик мерцания стоимости
@@ -27,7 +28,7 @@ package main
             sky_mc.addEventListener("UPDATE_STATISTIC", update);
 
             //добавляем минимапу
-            var minimap:Minimap;
+            minimap:Minimap;
             minimap = new Minimap(sky_mc);
             minimap.x = 52;
             minimap.y = 369;
