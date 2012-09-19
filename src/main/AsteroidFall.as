@@ -59,7 +59,7 @@ package main
                 dispatchEvent(new Event("CHANGE_EARTH_HP"));
                 removeEventListener(Event.ENTER_FRAME, move);
                 gotoAndPlay(2);
-                scaleX=scaleY=1;
+                scaleX = scaleY = 1;
             }
         }
 

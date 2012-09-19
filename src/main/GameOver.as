@@ -15,7 +15,6 @@ package main {
             // размещаемся в центре экрана
             x = dx;
             y = dy;
-            trace(1.1);
             // отобразим набранные очки
          //   this.score_label.text = "Score: "+Math.floor(sky.panel.score);
             // создаем яркое свечение вокруг текста
@@ -35,17 +34,10 @@ package main {
             // по ENTER_FRAME будем уменьшать прозрачность
             //var handlerEnterFrame:Function = function(event:Event):void { update(sky); };
            // addEventListener(Event.ENTER_FRAME, handlerEnterFrame);
-           trace(1.2);
-           sky.removeEventListener(Event.ENTER_FRAME, update);
-           trace(1.3);
-           trace(sky.panel);
-           trace(sky.panel.x);
-           trace(sky.panel.y);
-           trace(sky.panel.minimap);
-           sky.panel.minimap.removeEventListener(Event.ENTER_FRAME, update);
-           trace(1.4);
-            sky.panel.parent.removeChild(sky.panel);
-           trace(1.5);
+
+           sky.removeEventListener(Event.ENTER_FRAME, sky.update);
+           sky.panel.minimap.removeEventListener(Event.ENTER_FRAME, sky.panel.minimap.update);
+           sky.panel.parent.removeChild(sky.panel);
             // прекращаем перетаскивание объектов
             //sky.bg.handleMouseLeave();
         }
@@ -54,7 +46,6 @@ package main {
         {
             // уменьшаем прозрачность
             bg.alpha += 0.007;
-            trace(bg.alpha);
             if (bg.alpha >= 1)
             {
                 // если экран полностью затемнился

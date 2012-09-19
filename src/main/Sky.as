@@ -132,14 +132,16 @@ package main
                 break;
                 case 1:
                     y1 = 0;
-                break;
+                    if (x1 != 0)
+                    {
+                        break;
+                    }
                 case 2:
                     y1 = 600;
                 break;
             }
 
 
-            //x1=-800; y1=-310; // пока так, для теста, из левого верхнего угла
             x2 = this.earth.x; y2 = this.earth.y; // двигаться к земле
             // выбираем рандомное количество
             cnt = Math.floor(DROP_CNT + (DROP_CNT / 3) * (Math.random() - 0.5)); // 30% рандом
@@ -224,16 +226,15 @@ package main
 
                                        if (obj2.type == 'earth' && obj.type == 'asteroid')
                                        {
-                                            obj2.hp = 0;
+                                           trace(obj2.hp)
                                            if (obj2.hp > 0)
                                             {
-                                               obj.hp = 0;
-
                                                 // на его место аттачим "падающий" астероид
                                                 var asteroidFall:AsteroidFall = new AsteroidFall();
                                                 asteroidFall.init(obj, this.earth);
                                                 addChild(asteroidFall);
                                                 asteroidFall.addEventListener("CHANGE_EARTH_HP", doUpdateStatistic);
+                                                obj.hp = 0;
                                             }
                                             else
                                             {
@@ -244,9 +245,7 @@ package main
 
                                                 var gameOverMovieClip:GameOver = new GameOver();
                                                 MovieClip(root).addChild(gameOverMovieClip);
-                                                trace(1);
                                                 gameOverMovieClip.init(this);
-                                                trace(2);
                                                 //root.panel.PlaySnd('EarthCrash', obj);
                                             }
                                         }
