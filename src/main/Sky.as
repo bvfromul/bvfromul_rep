@@ -226,7 +226,6 @@ package main
 
                                        if (obj2.type == 'earth' && obj.type == 'asteroid')
                                        {
-                                           trace(obj2.hp)
                                            if (obj2.hp > 0)
                                             {
                                                 // на его место аттачим "падающий" астероид
