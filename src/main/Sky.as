@@ -75,11 +75,11 @@ package main
 
         // закончили
         public function done():void {
-            removeEventListener(Event.ENTER_FRAME, update);
-            /*for each (var obj:BasicObject in all_moving)
+
+            for each (var obj:BasicObject in all_moving)
             {
                 removeChild(obj);
-            }*/
+            }
             // прекращаем перетаскивания
             //this.bg.handleMouseLeave();
             // остановим фоновую музыку
@@ -244,7 +244,8 @@ package main
 
                                                 var gameOverMovieClip:GameOver = new GameOver();
                                                 MovieClip(root).addChild(gameOverMovieClip);
-                                                gameOverMovieClip.init(this);
+                                                gameOverMovieClip._parentClass = this;
+                                                gameOverMovieClip.init();
                                                 //root.panel.PlaySnd('EarthCrash', obj);
                                             }
                                         }
