@@ -237,16 +237,11 @@ package main
                                             }
                                             else
                                             {
-                                                //ex_mc = new ExplosionObject();
-                                                //ex_mc.init(obj2);
-                                                //addChild(ex_mc);
-                                                //removeChild(obj2);
-
+                                                this.panel.PlaySnd('EarthCrash', obj2);
                                                 var gameOverMovieClip:GameOver = new GameOver();
                                                 MovieClip(root).addChild(gameOverMovieClip);
                                                 gameOverMovieClip._parentClass = this;
                                                 gameOverMovieClip.init();
-                                                //root.panel.PlaySnd('EarthCrash', obj);
                                             }
                                         }
                                         else if(obj2.type == 'asteroid')
@@ -284,6 +279,7 @@ package main
                         if (obj.type == 'turret' || obj.type == 'rocket')
                         {
                             ex_mc = new ExplosionRocket();
+                            this.panel.PlaySnd('explode_rocket', obj);
                         }
                         else
                         {
@@ -299,6 +295,7 @@ package main
                             panel.addPoints(obj.maxHP);
                             // аттачим мувик взрыва
                             ex_mc = new ExplosionObject();
+                            this.panel.PlaySnd('asteroids_clash', obj);
                         }
                         ex_mc.init(obj);
                         addChild(ex_mc);

@@ -33,6 +33,7 @@ package main
             trgt.hp -= TURRET_DAMAGE;
             // запустить процесс перезарядки пушки
             weapon_recharge = 0;
+            (parent as Sky).panel.PlaySnd('lasersound', this);
         }
 
         // Масса лазерной турели небольшая

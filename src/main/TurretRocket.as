@@ -10,7 +10,7 @@ package main {
         const TURRET_COST:Number = 40;      // стоимость
         const TURRET_MASS:Number = 200;     // масса
 
-        public function TurretRocket()
+        public function TurretRocket():void
         {
             turret_type = 2;                        // тип турели - ракетная
             trgt_radius = TURRET_RADIUS;            // радиус поражения большой - целей 3.3 сектора
@@ -31,7 +31,7 @@ package main {
             // запустить процесс перезарядки пушки
             weapon_recharge = 0;
             // звук выстрела
-            //root.panel.PlaySnd('launch_rocket', this);
+            (parent as Sky).panel.PlaySnd('launch_rocket', this);
         }
 
         // Масса в 2 раза больше, чем у лазерной турели

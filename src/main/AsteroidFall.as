@@ -60,6 +60,7 @@ package main
                 removeEventListener(Event.ENTER_FRAME, move);
                 gotoAndPlay(2);
                 scaleX = scaleY = 1;
+                (parent as Sky).panel.PlaySnd('explode_to_earth', this);
             }
         }
 

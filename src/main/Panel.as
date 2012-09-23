@@ -5,6 +5,7 @@ package main
     import flash.events.MouseEvent;
     import main.Sky;
     import flash.geom.ColorTransform;
+    import flash.geom.Point;
 
     dynamic public class Panel extends Sprite
     {
@@ -16,7 +17,8 @@ package main
         private var kfMoney:Number;             // коэффициент HP/money
         private var twinkling_cnt:Number;       // счетчик мерцания стоимости
         private var twinkling_nm:String;        // для какой турели мерцает стоимость
-        var sky_mc:Sky;  // ссылка на главный класс
+        var sky_mc:Sky;                         // ссылка на главный класс
+        var gameSnd:Sound;                      // пространственные звуки
 
         public function Panel(sky:Sky)
         {
@@ -53,6 +55,10 @@ package main
                 this["money_t"+i].text = this["t"+i].cost;
                 i++;  // переходим к следующей турели
             }
+
+            // инициализируем звуки
+            gameSnd = new Sound();
+            gameSnd.init(sky_mc.stage.stageWidth, sky_mc.stage.stageHeight);
         }
 
         // обновить статистику
@@ -82,10 +88,10 @@ package main
         }
 
         // Добавляет очки
-        public function addPoints(asteroid_hp:Number):void
+        public function addPoints(asteroidHp:Number):void
         {
-            score += asteroid_hp/10;    // добавляем очки
-            money += Math.floor(asteroid_hp/kfMoney);   // и монеты
+            score += asteroidHp/10;    // добавляем очки
+            money += Math.floor(asteroidHp/kfMoney);   // и монеты
             kfMoney+=0.01;  // чем больше цничтожается астероидов, тем меньше поступает монет
             update();   // обновить статистику
         }
@@ -169,15 +175,22 @@ package main
                 {
                     // монет хватает
                     sky_mc.addTurret(x - sky_mc.x, y - sky_mc.y, event.currentTarget.turret_type);
-                    //game_snd.Play2DSnd('addship', x-stage.stageWidth/2,y-stage.stageHeight/2);
+                    gameSnd.Play2DSnd('addship', x-stage.stageWidth/2,y-stage.stageHeight/2);
                 }
                 else
                 {
                     // недостаточно монет
                     twinkling(event.currentTarget.name);
-                    //game_snd.Play2DSnd('error', 1,1);
+                    gameSnd.Play2DSnd('error', 1,1);
                 }
             }
+        }
+
+        // проигрывает указанный звук, местоположение определяется по объекту
+        public function PlaySnd(sndName:String, obj:Sprite):void
+        {
+            var point:Point = obj.localToGlobal(new Point(0,0));
+            gameSnd.Play2DSnd(sndName, point.x-stage.stageWidth/2, point.y-stage.stageHeight/2);
         }
     }
 }
