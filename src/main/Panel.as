@@ -3,42 +3,41 @@ package main
     import flash.display.Sprite;
     import flash.events.Event;
     import flash.events.MouseEvent;
-    import main.Sky;
     import flash.geom.ColorTransform;
     import flash.geom.Point;
 
     dynamic public class Panel extends Sprite
     {
-        const START_MONEY:Number = 30000; // сколько монет выдается в начале игры
-        public var score:Number;        // сколько игрок набрал очков
-        public var money:Number;        // сколько игрок имеет денег
+        public var score:Number;                 // сколько игрок набрал очков
+        public var money:Number;                // сколько игрок имеет денег
         public var minimap:Minimap;
 
         private var kfMoney:Number;             // коэффициент HP/money
         private var twinkling_cnt:Number;       // счетчик мерцания стоимости
         private var twinkling_nm:String;        // для какой турели мерцает стоимость
-        var sky_mc:Sky;                         // ссылка на главный класс
+        private var parentClass:Sky;            // ссылка на главный класс
         var gameSnd:Sound;                      // пространственные звуки
+
 
         public function Panel(sky:Sky)
         {
-            kfMoney=10;
-            money=START_MONEY;
+            kfMoney = 10;
+            money=GameConst.startMoney;
             score=0;
-            sky_mc = sky;
+            parentClass = sky;
             // Обновляем статистику по событию от главного класса
-            sky_mc.addEventListener("UPDATE_STATISTIC", update);
+            parentClass.addEventListener("UPDATE_STATISTIC", update);
 
             //добавляем минимапу
             minimap:Minimap;
-            minimap = new Minimap(sky_mc);
+            minimap = new Minimap(parentClass);
             minimap.x = 52;
             minimap.y = 369;
             this.addChild(minimap);
 
-            this.ascteroids_label.text = sky_mc.all_moving.length > 1 ? String(sky_mc.all_moving.length - 1) : "0";
-            this.earths_label.text = sky_mc.earth.hp.toString();
-            this.earth_hp.gotoAndStop(Math.floor(sky_mc.earth.hp / sky_mc.earth.maxHP * 100) + 1);
+            this.ascteroids_label.text = parentClass.all_moving.length > 1 ? String(parentClass.all_moving.length - 1) : "0";
+            this.earths_label.text = parentClass.earth.hp.toString();
+            this.earth_hp.gotoAndStop(Math.floor(parentClass.earth.hp / parentClass.earth.maxHP * 100) + 1);
 
             // даем возможность "перетащить" турели с панели управления на игровое поле
             var i:Number = 1;
@@ -58,18 +57,18 @@ package main
 
             // инициализируем звуки
             gameSnd = new Sound();
-            gameSnd.init(sky_mc.stage.stageWidth, sky_mc.stage.stageHeight);
+            gameSnd.init(parentClass.stage.stageWidth, parentClass.stage.stageHeight);
         }
 
         // обновить статистику
         public function update(event:Event=undefined):void
         {
             // Количество астероидов в игре (один объект в all_moving – это сама земля)
-            this.ascteroids_label.text = sky_mc.asteroid_count.toString();
+            this.ascteroids_label.text = parentClass.asteroid_count.toString();
             // Уровень жизни земли
-            this.earths_label.text = sky_mc.earth.hp.toString();
+            this.earths_label.text = parentClass.earth.hp.toString();
             // Прогресбар уровня жизни земли
-            this.earth_hp.gotoAndStop(Math.floor(sky_mc.earth.hp / sky_mc.earth.maxHP * 100) + 1);
+            this.earth_hp.gotoAndStop(Math.floor(parentClass.earth.hp / parentClass.earth.maxHP * 100) + 1);
             // Счет
             this.score_label.text = Math.floor(score).toString();
             // деньги
@@ -174,7 +173,7 @@ package main
                 if (decMoney(event.currentTarget.cost))
                 {
                     // монет хватает
-                    sky_mc.addTurret(x - sky_mc.x, y - sky_mc.y, event.currentTarget.turret_type);
+                    parentClass.addTurret(x - parentClass.x, y - parentClass.y, event.currentTarget.turret_type);
                     gameSnd.Play2DSnd('addship', x-stage.stageWidth/2,y-stage.stageHeight/2);
                 }
                 else

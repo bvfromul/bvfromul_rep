@@ -18,11 +18,13 @@ package main
         var all_sectors:Object;                 // сектора со ссылками на объекты в них
         var first_pause:Number; // неск. секунд в начале игры не бросаем астероиды
         var panel:Panel;
+        public var gameConst:GameConst = new GameConst();
 
         var asteroid_count:Number = 0;
 
         public function Sky()
         {
+            //gameConst = new GameConst();
             all_moving = [];
             all_sectors = { };
             var zone:String;
