@@ -8,13 +8,13 @@ package main
 
     dynamic public class Panel extends Sprite
     {
-        public var score:Number;                 // сколько игрок набрал очков
+        public var score:Number;                // сколько игрок набрал очков
         public var money:Number;                // сколько игрок имеет денег
         public var minimap:Minimap;
 
         private var kfMoney:Number;             // коэффициент HP/money
-        private var twinkling_cnt:Number;       // счетчик мерцания стоимости
-        private var twinkling_nm:String;        // для какой турели мерцает стоимость
+        private var twinklingCnt:Number;       // счетчик мерцания стоимости
+        private var twinklingNm:String;        // для какой турели мерцает стоимость
         private var parentClass:Sky;            // ссылка на главный класс
         var gameSnd:Sound;                      // пространственные звуки
 
@@ -29,29 +29,29 @@ package main
             parentClass.addEventListener("UPDATE_STATISTIC", update);
 
             //добавляем минимапу
-            minimap:Minimap;
+            var minimap:Minimap;
             minimap = new Minimap(parentClass);
             minimap.x = 52;
             minimap.y = 369;
             this.addChild(minimap);
 
-            this.ascteroids_label.text = parentClass.all_moving.length > 1 ? String(parentClass.all_moving.length - 1) : "0";
-            this.earths_label.text = parentClass.earth.hp.toString();
-            this.earth_hp.gotoAndStop(Math.floor(parentClass.earth.hp / parentClass.earth.maxHP * 100) + 1);
+            this.ascteroidsLabel.text = parentClass.allMoving.length > 1 ? String(parentClass.allMoving.length - 1) : "0";
+            this.earthsLabel.text = parentClass.earth.hp.toString();
+            this.earthHpLine.gotoAndStop(Math.floor(parentClass.earth.hp / parentClass.earth.maxHP * 100) + 1);
 
             // даем возможность "перетащить" турели с панели управления на игровое поле
             var i:Number = 1;
-            while (this["t" + i])
+            while (this["turret" + i])
             {
                 // есть такая турель
                 // запомним координаты, чтобы после перетаскивания вернуть на место
-                this["t"+i].old_x = this["t"+i].x;
-                this["t"+i].old_y = this["t"+i].y;
-                this["t"+i].hp = this["t"+i].maxHP = 0; // нет полоски с HP
+                this["turret"+i].oldX = this["turret"+i].x;
+                this["turret"+i].oldY = this["turret"+i].y;
+                this["turret"+i].hp = this["turret"+i].maxHP = 0; // нет полоски с HP
                 // для перетаскивания перехватываем нажатие и отпускание кнопки мышки
-                this["t"+i].addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
-                this["t" + i].addEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
-                this["money_t"+i].text = this["t"+i].cost;
+                this["turret"+i].addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
+                this["turret" + i].addEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
+                this["costTurrret"+i].text = this["turret"+i].cost;
                 i++;  // переходим к следующей турели
             }
 
@@ -63,25 +63,25 @@ package main
         // обновить статистику
         public function update(event:Event=undefined):void
         {
-            // Количество астероидов в игре (один объект в all_moving – это сама земля)
-            this.ascteroids_label.text = parentClass.asteroid_count.toString();
+            // Количество астероидов в игре (один объект в allMoving – это сама земля)
+            this.ascteroidsLabel.text = parentClass.asteroidCount.toString();
             // Уровень жизни земли
-            this.earths_label.text = parentClass.earth.hp.toString();
+            this.earthsLabel.text = parentClass.earth.hp.toString();
             // Прогресбар уровня жизни земли
-            this.earth_hp.gotoAndStop(Math.floor(parentClass.earth.hp / parentClass.earth.maxHP * 100) + 1);
+            this.earthHpLine.gotoAndStop(Math.floor(parentClass.earth.hp / parentClass.earth.maxHP * 100) + 1);
             // Счет
-            this.score_label.text = Math.floor(score).toString();
+            this.scoreLabel.text = Math.floor(score).toString();
             // деньги
-            this.money_label.text = money.toString();
+            this.moneyLabel.text = money.toString();
             // подсветим красным турели, которые сейчас нельзя поставить из-за нехватки денег
             var i:Number = 1;
             var ok:Boolean;
-            while (this["t" + i])
+            while (this["turret" + i])
             {
                 // есть такая турель
-                ok = this["t"+i].cost <= money;
-                this["t"+i].transform.colorTransform = new ColorTransform(1,1,1, 1, ok?0:200,0,0, 0);
-                this["money_t"+i].textColor = ok ? 0xFFFFFF : 0xFF0000;
+                ok = this["turret"+i].cost <= money;
+                this["turret"+i].transform.colorTransform = new ColorTransform(1,1,1, 1, ok?0:200,0,0, 0);
+                this["costTurrret"+i].textColor = ok ? 0xFFFFFF : 0xFF0000;
                 i++;
             }
         }
@@ -110,15 +110,15 @@ package main
         }
 
         // Мерцает стоимость указанной турели
-        function twinkling(nm:String):void
+        function twinkling(target:String):void
         {
-            if (twinkling_cnt)
+            if (twinklingCnt)
             {
                 // уже что-то мерцает
                 stopTwinkling();    // прекращаем
             }
-            twinkling_nm=nm;
-            twinkling_cnt=21;   // мерцаем секунду
+            twinklingNm=target;
+            twinklingCnt=21;   // мерцаем секунду
             // добавляем обработку события по ENTER_FRAME
             addEventListener(Event.ENTER_FRAME, doTwinkling);
         }
@@ -126,10 +126,10 @@ package main
         // функция мерцания
         function doTwinkling(event:Event):void
         {
-            if (--twinkling_cnt)
+            if (--twinklingCnt)
             {
                 // еще мерцаем
-                this["money_"+twinkling_nm].visible = this.money_label.visible = !this.money_label.visible;
+                this["money_"+twinklingNm].visible = this.moneyLabel.visible = !this.moneyLabel.visible;
             }
             else
             { // закончили
@@ -140,7 +140,7 @@ package main
         function stopTwinkling():void
         {
             // возвращаем видимость полей
-            this.money_label.visible = this["money_"+twinkling_nm].visible = true;
+            this.moneyLabel.visible = this["money_"+twinklingNm].visible = true;
             // удаляем событие
             removeEventListener(Event.ENTER_FRAME, doTwinkling);
         }
@@ -164,8 +164,8 @@ package main
             var x:Number = event.currentTarget.x;
             var y:Number = event.currentTarget.y;
             // вернем турель на место
-            event.currentTarget.x = event.currentTarget.old_x;
-            event.currentTarget.y = event.currentTarget.old_y;
+            event.currentTarget.x = event.currentTarget.oldX;
+            event.currentTarget.y = event.currentTarget.oldY;
             // если кинули правее панели управления, т.е. на игровую область
             if (x > 100)
             {
@@ -173,7 +173,7 @@ package main
                 if (decMoney(event.currentTarget.cost))
                 {
                     // монет хватает
-                    parentClass.addTurret(x - parentClass.x, y - parentClass.y, event.currentTarget.turret_type);
+                    parentClass.addTurret(x - parentClass.x, y - parentClass.y, event.currentTarget.turretType);
                     gameSnd.Play2DSnd('addship', x-stage.stageWidth/2,y-stage.stageHeight/2);
                 }
                 else

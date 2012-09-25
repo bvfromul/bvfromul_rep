@@ -14,18 +14,16 @@ package main
 
         var DROP_CNT:Number;    // примерное количество вбрасываемых астероидов
         var MIN_DROP:Number, MAX_DROP:Number;   // пределы количества вбрасываемых астероидов
-        var all_moving:Array;                   // здесь все движущиеся объекты
+        var allMoving:Array;                   // здесь все движущиеся объекты
         var all_sectors:Object;                 // сектора со ссылками на объекты в них
         var first_pause:Number; // неск. секунд в начале игры не бросаем астероиды
         var panel:Panel;
-        public var gameConst:GameConst = new GameConst();
 
-        var asteroid_count:Number = 0;
+        var asteroidCount:Number = 0;
 
         public function Sky()
         {
-            //gameConst = new GameConst();
-            all_moving = [];
+            allMoving = [];
             all_sectors = { };
             var zone:String;
             // сколько астероидов вбрасывается
@@ -44,7 +42,7 @@ package main
 
             addEventListener(Event.ENTER_FRAME, update);
             // тестовый вброс
-            dropSeveralAsteroids(asteroid_count);
+            dropSeveralAsteroids(asteroidCount);
             addObjectInSectors(this.earth);
 
             this.earth.tkHP = this.earth.mHP = 100;
@@ -78,7 +76,7 @@ package main
         // закончили
         public function done():void {
 
-            for each (var obj:BasicObject in all_moving)
+            for each (var obj:BasicObject in allMoving)
             {
                 removeChild(obj);
             }
@@ -183,8 +181,8 @@ package main
             var zone:String, obj2:BasicObject, i:Number, fragment:SmallAsteroid, ex_mc:Explosion;
             // Проходим по всему массиву созданных объектов
             // и заставляем каждого сдвинуться в своем направлении
-            asteroid_count = 0;
-            for each (var obj:BasicObject in all_moving)
+            asteroidCount = 0;
+            for each (var obj:BasicObject in allMoving)
             {
                 // смещаемся
                 obj.move();
@@ -201,7 +199,7 @@ package main
                     {
                         if (obj.type == 'asteroid')
                         {
-                            asteroid_count++;
+                            asteroidCount++;
                         }
 
                         if (obj.x<(-width/2) || obj.x>(width/2) || obj.y<(-height/2) || obj.y>(height/2))
@@ -310,9 +308,9 @@ package main
             }
 
             // если осталось мало астероидов, то вбрасываем еще
-            if (asteroid_count < DROP_CNT)
+            if (asteroidCount < DROP_CNT)
             {
-                dropSeveralAsteroids(asteroid_count);
+                dropSeveralAsteroids(asteroidCount);
             }
         }
 
@@ -320,7 +318,7 @@ package main
         public function addObjectInSectors(obj:BasicObject)
         {
             var zone:String;
-            all_moving.push(obj);
+            allMoving.push(obj);
             obj.calcSectors();
             for (zone in obj.sectors)
             {
@@ -337,11 +335,11 @@ package main
         private function deleteFromObjList(obj:Object)
         {
             var counter:Number;
-            for (counter = 0; counter < all_moving.length; counter++)
+            for (counter = 0; counter < allMoving.length; counter++)
             {
-                if (all_moving[counter] == obj)
+                if (allMoving[counter] == obj)
                 {
-                    all_moving.splice(counter,1);
+                    allMoving.splice(counter,1);
                     break;
                 }
             }
@@ -455,10 +453,10 @@ package main
         }
 
         // Добавить турель в игру
-        public function addTurret(x:Number, y:Number, turret_type:Number)
+        public function addTurret(x:Number, y:Number, turretType:Number)
         {
             var obj:TurretObject;
-            switch(turret_type)
+            switch(turretType)
             {
                 case 1:
                     obj = new TurretLaser();

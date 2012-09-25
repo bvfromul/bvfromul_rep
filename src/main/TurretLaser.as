@@ -14,7 +14,7 @@ package main
 
         public function TurretLaser()
         {
-            turret_type = 1; // тип турели - лазерная
+            turretType = 1; // тип турели - лазерная
             trgt_radius = TURRET_RADIUS; // радиус поражения целей 2 сектора
             hp=maxHP=TURRET_HP; // уровень жизни маленький
             max_weapon_recharge = TURRET_RECHARGE; // время перезаряда пушки

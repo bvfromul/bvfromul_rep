@@ -12,7 +12,7 @@ package main {
 
         public function TurretRocket():void
         {
-            turret_type = 2;                        // тип турели - ракетная
+            turretType = 2;                        // тип турели - ракетная
             trgt_radius = TURRET_RADIUS;            // радиус поражения большой - целей 3.3 сектора
             hp = maxHP = TURRET_HP;                 // уровень жизни совсем маленький
             max_weapon_recharge=TURRET_RECHARGE;    // время перезаряда пушки - 3 секунды

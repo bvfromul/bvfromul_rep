@@ -39,7 +39,7 @@ package main
             // рисуем все объекты
             bg.graphics.lineStyle(0);
 
-            for each (obj in sky_mc.all_moving)
+            for each (obj in sky_mc.allMoving)
             {
                 // рисуем объект если он находится внутри игровой зоны
                 if (obj.x > -Math.round((sky_mc.sky.width)/2) && obj.y > -Math.round(sky_mc.sky.height/2) && obj.x < Math.round((sky_mc.sky.width)/2) && obj.y < Math.round(sky_mc.sky.height/2))

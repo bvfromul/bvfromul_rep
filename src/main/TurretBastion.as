@@ -12,7 +12,7 @@ package main {
 
         public function TurretBastion()
         {
-            turret_type = 3;    // тип турели - крепость
+            turretType = 3;    // тип турели - крепость
             trgt_radius = 0;    // не имеет радиуса поражения
             hp = maxHP = TURRET_HP;    // уровень жизни
             cost = TURRET_COST;    // сколько стоит поставить эту турель
