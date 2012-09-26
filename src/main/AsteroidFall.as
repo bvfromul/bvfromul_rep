@@ -5,10 +5,10 @@ package main
 
     dynamic public class AsteroidFall extends MovieClip
     {
-        public var velocity:Vector_h; // вектор движения
-        public var rot:Number; // направление вращения
-        var earth_obj:BasicObject; // ссылка на планету
-        var this_obj:BasicObject;
+        public var velocity:Vector_h;   // вектор движения
+        public var rot:Number;          // направление вращения
+        var earthObj:BasicObject;       // ссылка на планету
+        var thisObj:BasicObject;
 
         // ссылка на астероид и на планету
         public function init(obj:BasicObject, earth:BasicObject)
@@ -27,8 +27,8 @@ package main
             // радиус такой же
            // radius=obj.radius;
             // запоминаем ссылку на объект планеты
-            earth_obj = earth;
-            this_obj = obj;
+            earthObj = earth;
+            thisObj = obj;
             // двигаемся самостоятельно
             addEventListener(Event.ENTER_FRAME, move);
             // следующими кадрами у нас нарисован взрыв, а пока отображаем астероид
@@ -39,8 +39,8 @@ package main
         public function move(event:Event):void
         {
             // при падении на землю, вектор движения должен плавно меняться к центру планеты
-            var v:Vector_h = new Vector_h(earth_obj.x-x, earth_obj.y-y);
-            v.mulScalar(1/earth_obj.radius);
+            var v:Vector_h = new Vector_h(earthObj.x-x, earthObj.y-y);
+            v.mulScalar(1/earthObj.radius);
             // а скорость движения должна уменьшаться
             var len = velocity.magnitude()*0.95;
             velocity.addVector(v);
@@ -55,12 +55,16 @@ package main
             if (scaleX < 0.1)
             {
                 // совсем маленький, пора прекращать движение и рисовать взрыв
-                earth_obj.hp -= this_obj.radius; // уменьшим HP земли, дамаг пропорционален нашему размеру
+                earthObj.hp -= thisObj.radius; // уменьшим HP земли, дамаг пропорционален нашему размеру
                 dispatchEvent(new Event("CHANGE_EARTH_HP"));
                 removeEventListener(Event.ENTER_FRAME, move);
                 gotoAndPlay(2);
                 scaleX = scaleY = 1;
-                (parent as Sky).panel.PlaySnd('explode_to_earth', this);
+
+                if ((parent as Sky).panel)
+                {
+                    (parent as Sky).panel.PlaySnd('explode_to_earth', this);
+                }
             }
         }
 

@@ -8,15 +8,15 @@ package main
 
     dynamic public class Panel extends Sprite
     {
-        public var score:Number;                // сколько игрок набрал очков
-        public var money:Number;                // сколько игрок имеет денег
+        public var score:Number;               // сколько игрок набрал очков
+        public var money:Number;               // сколько игрок имеет денег
         public var minimap:Minimap;
 
-        private var kfMoney:Number;             // коэффициент HP/money
+        private var kfMoney:Number;            // коэффициент HP/money
         private var twinklingCnt:Number;       // счетчик мерцания стоимости
         private var twinklingNm:String;        // для какой турели мерцает стоимость
-        private var parentClass:Sky;            // ссылка на главный класс
-        var gameSnd:Sound;                      // пространственные звуки
+        private var parentClass:Sky;           // ссылка на главный класс
+        var gameSnd:Sound;                     // пространственные звуки
 
 
         public function Panel(sky:Sky)
@@ -29,7 +29,7 @@ package main
             parentClass.addEventListener("UPDATE_STATISTIC", update);
 
             //добавляем минимапу
-            var minimap:Minimap;
+            minimap:Minimap;
             minimap = new Minimap(parentClass);
             minimap.x = 52;
             minimap.y = 369;

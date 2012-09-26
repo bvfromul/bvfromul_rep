@@ -9,22 +9,22 @@ package main
 
     dynamic public class BasicObject extends MovieClip
     {
-        public var radius:Number; // радиус
-        public var sectors:Object;  // какие сектора пересекает объект
-        public var velocity:Vector_h;   // вектор движения
-        public var type;
-        //var tkHP:Number; // текущий и максимальный уровни жизни
-        var hp_mc:HPline;    // мувик полоски уровня жизни
-        var hideTimeout:Number = 1000; // id таймера на удаление полоски уровня жизни
+        public var radius:Number;                           // радиус
+        public var sectors:Object;                          // какие сектора пересекает объект
+        public var velocity:Vector_h;                       // вектор движения
+        public var type;                                    // тип объекта
+
+        var hpLine:HPline;                                  // мувик полоски уровня жизни
+        var hideTimeout:Number = GameConst.hideTimeout;     // id таймера на удаление полоски уровня жизни
         var mHP:Number;
         var tkHP:Number;
 
 
         public function BasicObject()
         {
-            hp_mc = new HPline(); // создаем мувик полоски жизни
+            hpLine = new HPline(); // создаем мувик полоски жизни
             hideInfo();
-            addChild(hp_mc); // добавим
+            addChild(hpLine); // добавим
             velocity = new Vector_h(); // создаем вектор
             addEventListener(MouseEvent.MOUSE_OVER, showInfo);// при наведении мышки - показать
             addEventListener(MouseEvent.MOUSE_OUT, hideInfo); // при уходе мышки - убрать
@@ -99,18 +99,18 @@ package main
                hideTimeout=0;
              }
 
-            hp_mc.visible=true;
+            hpLine.visible=true;
             // зная радиус объекта, располагаем полоску сверху
 
-            hp_mc.x=-radius/2+hp_mc.width/4;
-            hp_mc.y = -radius-20;
-            this.hp_mc.gotoAndStop(Math.floor(tkHP/mHP*100)+1);    // уровень жизни в процентах
+            hpLine.x=-radius/2+hpLine.width/4;
+            hpLine.y = -radius-20;
+            this.hpLine.gotoAndStop(Math.floor(tkHP/mHP*100)+1);    // уровень жизни в процентах
         }
 
         // Убирает информацию об объекте
         public function hideInfo(event:Event = undefined) :void
         {
-            if (!(hp_mc && hp_mc.visible))
+            if (!(hpLine && hpLine.visible))
             {
                 // полоска не создана или не видна
                 hideTimeout = setTimeout(graphics.clear, 1000);
@@ -122,15 +122,15 @@ package main
                 hideTimeout=setTimeout(hideInfoNow, 1000);
             }
 
-            hp_mc.visible=false; // прячем
+            hpLine.visible=false; // прячем
         }
 
         // Немедленно убирает полоску уровня жизни
         public function hideInfoNow():void
         {
-            if (hp_mc)
+            if (hpLine)
             {
-                hp_mc.visible=false; // прячем
+                hpLine.visible=false; // прячем
             }
             hideTimeout=0;
         }
@@ -139,7 +139,7 @@ package main
         public function set hp(newHP:Number):void
         {
             tkHP=Math.max(0, newHP); // уровень жизни не может быть меньше нуля
-            if (hp_mc && hp_mc.visible)
+            if (hpLine && hpLine.visible)
             {
                 // нарисована полоска уровня жизни
                 showInfo(); // нужно обновить информацию
@@ -156,7 +156,7 @@ package main
         public function set maxHP(new_maxHP:Number) :void
         {
             mHP=new_maxHP;
-            if (hp_mc && hp_mc.visible)
+            if (hpLine && hpLine.visible)
             {
                 // нарисована полоска уровня жизни
                 showInfo(); // нужно обновить информацию
