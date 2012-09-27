@@ -1,13 +1,12 @@
 package main
 {
     import flash.display.MovieClip;
-    import main.BasicObject;
 
     dynamic public class MovingObject extends BasicObject
     {
-        const DROP_RADIUS:Number = 200;     // разброс при вбрасывании
-        const MIN_SPEED:Number = 1;  // раброс начальной скорости
-        const MAX_SPEED:Number = 10;
+        private var dropRadius:Number = GameConst.dropRadius;
+        private var minSpeed:Number = GameConst.minSpeed;
+        private var maxSpeed:Number = GameConst.minSpeed;
 
         private var rot:Number;
 
@@ -27,12 +26,12 @@ package main
         public function drop(x1:Number, y1:Number, x2:Number, y2:Number):void
         {
             // координата вброса
-            x = x1 + (Math.random()-0.5)*DROP_RADIUS;
-            y = y1 + (Math.random() - 0.5) * DROP_RADIUS;
+            x = x1 + (Math.random()-0.5)*dropRadius;
+            y = y1 + (Math.random() - 0.5) * dropRadius;
             // направление
             velocity.setMembers(x2 - x, y2 - y);
             // скорость
-            var spd:Number = MIN_SPEED + (MAX_SPEED-MIN_SPEED)*Math.random();
+            var spd:Number = minSpeed + (maxSpeed-minSpeed)*Math.random();
             // приведем длину вектора к выбранной скорости
             velocity.mulScalar( spd / velocity.magnitude() );
         }
