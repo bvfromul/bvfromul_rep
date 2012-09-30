@@ -120,7 +120,7 @@ package main
                 {
                     // название сектора
                     s = i+"_"+j;
-                    for each (obj in (parent as Sky).all_sectors[s])
+                    for each (obj in (parent as Sky).allSectors[s])
                     {
                         // все объекты в секторе
                         if ((obj.type == 'asteroid') && (obj.hp > 0))

@@ -2,36 +2,32 @@ package main
 {
     import flash.display.MovieClip;
     import flash.events.Event;
-    import main.MovingObject;
     import flash.geom.Rectangle;
     import flash.events.MouseEvent;
-    import main.GameOver;
 
     dynamic public class Sky extends MovieClip
     {
-        const INC_DROP:Number = 0.5;    // скорость увеличения количества астероидов
-        const FIRST_DROP:Number = 3;    // Сколько астероидов вбрасывается вначале
+        private var asteroidIncSpeedDrop:Number = GameConst.asteroidIncSpeedDrop;
+        private var asteroidFirstDrop:Number = GameConst.asteroindFirstDrop;
+        private var asteroidCntMinDrop:Number = GameConst.asteroidCntMinDrop
+        private var asteroidCntMaxDrop:Number = GameConst.asteroidCntMaxDrop
 
-        var DROP_CNT:Number;    // примерное количество вбрасываемых астероидов
-        var MIN_DROP:Number, MAX_DROP:Number;   // пределы количества вбрасываемых астероидов
+        private var asteroidDropCnt:Number;            // примерное количество вбрасываемых астероидов
+        private var firstPause:Number;                 // неск. секунд в начале игры не бросаем астероиды
+
         var allMoving:Array;                   // здесь все движущиеся объекты
-        var all_sectors:Object;                 // сектора со ссылками на объекты в них
-        var first_pause:Number; // неск. секунд в начале игры не бросаем астероиды
+        var allSectors:Object;                 // сектора со ссылками на объекты в них
         var panel:Panel;
-
         var asteroidCount:Number = 0;
 
         public function Sky()
         {
             allMoving = [];
-            all_sectors = { };
+            allSectors = { };
             var zone:String;
-            // сколько астероидов вбрасывается
-            // это не константы, т.к. со временем количество астероидов должно увеличиваться
-            MIN_DROP=1; MAX_DROP=7;
 
-            DROP_CNT = FIRST_DROP;
-            first_pause = 21*7; // пауза в начале игры
+            asteroidDropCnt = asteroidFirstDrop;
+            firstPause = 21*7; // пауза в начале игры
 
 
             // Перехватываем нажатие кнопки мыши по нашему мувику
@@ -91,12 +87,12 @@ package main
             var x1:Number, y1:Number; // точка вброса
             var x2:Number, y2:Number; // куда двигаться
             var cnt:Number;    // количество вбрасываемых встероидов
-            var new_asteroid:MovingObject; // объект астероида
+            var newAsteroid:MovingObject; // объект астероида
 
-            if (first_pause > 0)
+            if (firstPause > 0)
             {
                 // в начале игры пауза
-                first_pause--;
+                firstPause--;
                 return;
             }
 
@@ -144,7 +140,7 @@ package main
 
             x2 = this.earth.x; y2 = this.earth.y; // двигаться к земле
             // выбираем рандомное количество
-            cnt = Math.floor(DROP_CNT + (DROP_CNT / 3) * (Math.random() - 0.5)); // 30% рандом
+            cnt = Math.floor(asteroidDropCnt + (asteroidDropCnt / 3) * (Math.random() - 0.5)); // 30% рандом
 
             if (curentCount + cnt > 10)
             {
@@ -159,26 +155,26 @@ package main
 
             while (cnt--)
             {
-                new_asteroid = new MovingObject();     // создаем новый астероид
-                new_asteroid.type = "asteroid";
-                addChild(new_asteroid);           // добавляем его на наш мувиклип
-                new_asteroid.drop(x1,y1,
+                newAsteroid = new MovingObject();     // создаем новый астероид
+                newAsteroid.type = "asteroid";
+                addChild(newAsteroid);           // добавляем его на наш мувиклип
+                newAsteroid.drop(x1,y1,
                     x2+(this.earth.radius*(Math.random()-0.5)*0.8),
                     y2+(this.earth.radius*(Math.random()-0.5)*0.8)
                 );
 
-                addObjectInSectors(new_asteroid);
+                addObjectInSectors(newAsteroid);
             }
 
             // при следующем вбрасывании астероидов должно быть больше
-            DROP_CNT += INC_DROP;
+            asteroidDropCnt += asteroidIncSpeedDrop;
             // обновить статистику
             doUpdateStatistic();
         }
 
         public function update(event : Event):void
         {
-            var zone:String, obj2:BasicObject, i:Number, fragment:SmallAsteroid, ex_mc:Explosion;
+            var zone:String, obj2:BasicObject, i:Number, fragment:SmallAsteroid, explosion:Explosion;
             // Проходим по всему массиву созданных объектов
             // и заставляем каждого сдвинуться в своем направлении
             asteroidCount = 0;
@@ -192,7 +188,7 @@ package main
                     // перед тем, как сдвинуться удалим запись об этом объекте из секторов
                     for (zone in obj.sectors)
                     {
-                        delete all_sectors[zone][obj.name];
+                        delete allSectors[zone][obj.name];
                     }
 
                     if (obj.hp>0)
@@ -217,9 +213,9 @@ package main
                        // Проверяем столкновения со всеми объектами, которые есть в новых секторах
                        for (zone in obj.sectors)
                        {
-                            if (all_sectors[zone])
+                            if (allSectors[zone])
                             {  // такой сектор есть
-                                for each (obj2 in all_sectors[zone])
+                                for each (obj2 in allSectors[zone])
                                 { // проверяем на столкновение
                                     if (obj.checkCollision(obj2))
                                     {
@@ -264,11 +260,11 @@ package main
                             else
                             {
                                 // нет такого сектора
-                                all_sectors[zone] = {}; // теперь будет
+                                allSectors[zone] = {}; // теперь будет
                             }
 
                             // регистрируемся в этом секторе
-                            all_sectors[zone][obj.name]=obj;
+                            allSectors[zone][obj.name]=obj;
                         }
                     }
                     else
@@ -278,7 +274,7 @@ package main
 
                         if (obj.type == 'turret' || obj.type == 'rocket')
                         {
-                            ex_mc = new ExplosionRocket();
+                            explosion = new ExplosionRocket();
                             this.panel.PlaySnd('explode_rocket', obj);
                         }
                         else
@@ -294,11 +290,11 @@ package main
 
                             panel.addPoints(obj.maxHP);
                             // аттачим мувик взрыва
-                            ex_mc = new ExplosionObject();
+                            explosion = new ExplosionObject();
                             this.panel.PlaySnd('asteroids_clash', obj);
                         }
-                        ex_mc.init(obj);
-                        addChild(ex_mc);
+                        explosion.init(obj);
+                        addChild(explosion);
                         // удаляем сам мувик астероида
                         removeChild(obj);
                         // учитываем влияние ударной волны взрыва на другие объекты
@@ -308,7 +304,7 @@ package main
             }
 
             // если осталось мало астероидов, то вбрасываем еще
-            if (asteroidCount < DROP_CNT)
+            if (asteroidCount < asteroidDropCnt)
             {
                 dropSeveralAsteroids(asteroidCount);
             }
@@ -322,12 +318,12 @@ package main
             obj.calcSectors();
             for (zone in obj.sectors)
             {
-                if (!all_sectors[zone])
+                if (!allSectors[zone])
                 {
                     // такого сектора еще не было, создадим
-                    all_sectors[zone] = {};
+                    allSectors[zone] = {};
                 }
-                all_sectors[zone][obj.name] = obj;
+                allSectors[zone][obj.name] = obj;
             }
         }
 
@@ -393,21 +389,25 @@ package main
         }
 
         // Отодвигает шарик 1 от шарика 2, чтобы они не пересекались
-        function pullBalls(ball1:BasicObject, ball2:BasicObject, add_random:Number=0):void
+        function pullBalls(ball1:BasicObject, ball2:BasicObject, addRandom:Number=0):void
         {
-            var v:Vector_h = new Vector_h(ball1.x-ball2.x, ball1.y-ball2.y);
-            var distance:Number = v.magnitude();
-            var min_distance:Number = ball1.radius + ball2.radius;
-            if (distance > min_distance) return; // не пересекаются
-            v.mulScalar((0.1+min_distance-distance)/distance);
-            ball1.x += v.x;
-            ball1.y += v.y;
-            // добавить небольшой рандом в положение ball1
-            if (add_random > 0)
+            var vector:Vector_h = new Vector_h(ball1.x-ball2.x, ball1.y-ball2.y);
+            var distance:Number = vector.magnitude();
+            var minDistance:Number = ball1.radius + ball2.radius;
+
+            if (distance > minDistance)
             {
-                ball1.velocity.addVector(v.getUnitVector());
-                ball1.x += (Math.random()-0.5)*add_random;
-                ball1.y += (Math.random()-0.5)*add_random;
+                return; // не пересекаются
+            }
+            vector.mulScalar((0.1+minDistance-distance)/distance);
+            ball1.x += vector.x;
+            ball1.y += vector.y;
+            // добавить небольшой рандом в положение ball1
+            if (addRandom > 0)
+            {
+                ball1.velocity.addVector(vector.getUnitVector());
+                ball1.x += (Math.random()-0.5)*addRandom;
+                ball1.y += (Math.random()-0.5)*addRandom;
             }
         }
 
@@ -416,8 +416,8 @@ package main
         function addExplosion(x:Number, y:Number, massa:Number)
         {
             var i:Number, j:Number; //названия сектора i_j
-            var obj:BasicObject, s:String;
-            var v:Vector_h;
+            var obj:BasicObject, sector:String;
+            var vector:Vector_h;
             // т.к. один астероид может пересекать несколько секторов
             // для того, чтобы его несколько раз не просчитать
             // записываем уже просчитанные астероиды в "one"
@@ -430,20 +430,20 @@ package main
                 for (j = Math.floor((y - massa) / 100); j <= Math.floor((y + massa) / 100); j++)
                 {
                     // название сектора
-                    s = i+"_"+j;
-                    for each (obj in all_sectors[s])
+                    sector = i+"_"+j;
+                    for each (obj in allSectors[sector])
                     {
                         // все объекты в секторе
                         if ((! one[obj.name]) && (obj.type == 'asteroid'))
                         {
                             // этот объект еще не просчитывали
                             // создаем вектор до объекта
-                            v = new Vector_h(obj.x - x, obj.y - y);
+                            vector = new Vector_h(obj.x - x, obj.y - y);
                             // Высчитываем длину вектора воздействия
                             // Уменьшение с расстоянием и нужно учесть разность масс
-                            v.mulScalar(100/v.magnitude2() * (massa/obj.getMassa())/2);
+                            vector.mulScalar(100/vector.magnitude2() * (massa/obj.getMassa())/2);
                             // прибавляем вектор воздействия взрыва к вектору движения объекта
-                            obj.velocity.addVector(v);
+                            obj.velocity.addVector(vector);
                             // запомним, что этот объект просчитали
                             one[obj.name]=true;
                         }
@@ -478,21 +478,21 @@ package main
             addChild(obj);  // добавляем на наш мувиклип
 
             // теперь двигаем турель так, чтобы она не пересекалась ни с одинм объектом на поле
-            var check_again:Boolean;
+            var checkAgain:Boolean;
             var cnt:Number=0;
-            var s:String, obj2:BasicObject;
+            var sector:String, obj2:BasicObject;
             do
             {
-                check_again=false;
+                checkAgain=false;
                 // Просим пересчитать в какие сектора попала турель
                 obj.calcSectors();
-                for (s in obj.sectors)
+                for (sector in obj.sectors)
                 {
-                    if (!check_again)
+                    if (!checkAgain)
                     {
                         // еще не обнаружили столкновение
                         // проверяем на столкновение со всеми объектами в секторе
-                        for each (obj2 in all_sectors[s])
+                        for each (obj2 in allSectors[sector])
                         {
                             if (obj.checkCollision(obj2))
                             {
@@ -500,7 +500,7 @@ package main
                                 // отодвинем, чтобы не пересекались
                                 pullBalls(obj, obj2, cnt);
                                 // проверяем на столкновения повторно
-                                check_again=true;
+                                checkAgain=true;
                                 // турель сдвинута, дальше проверять эти сектора нет смысла
                                 break;
                             }
@@ -508,7 +508,7 @@ package main
                     }
                 }
                 cnt++;
-             } while (check_again);
+             } while (checkAgain);
              // Разместили турель так, что она ни с кем не пересекается
 
             addObjectInSectors(obj);

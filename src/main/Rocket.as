@@ -4,11 +4,11 @@ package main {
 
     dynamic public class Rocket extends BasicObject
     {
-        const MAX_SPEED:Number = 12;// максимальная скорость
-        const DAMAGE:Number = 300;  // наносимый урон цели
-        var trgt:BasicObject;       // цель
-        var selfDestruction:Number; // счетчик на самоуничтожение
-        var speed:Number;           // текущая скорость
+        private var maxSpeed:Number = GameConst.rocketMaxSpeed;
+        private var damage:Number = GameConst.rocketDamage;
+        private var trgt:BasicObject;       // цель
+        private var selfDestruction:Number; // счетчик на самоуничтожение
+        private var speed:Number;           // текущая скорость
 
         // ссылка на турель и на астероид
         public function init(turret:TurretObject, asteroid:BasicObject)
@@ -38,9 +38,9 @@ package main {
         override public function move():void
         {
             // набираем скорость
-            if (speed < MAX_SPEED)
+            if (speed < maxSpeed)
             {
-                speed += Math.min(3, Math.max(0.3, 1/(MAX_SPEED-speed)));
+                speed += Math.min(3, Math.max(0.3, 1/(maxSpeed-speed)));
             }
             if (!trgt || !trgt.hp)
             {
@@ -69,7 +69,7 @@ package main {
                 // поворачиваемся к цели
                 this.bg.rotation = velocity.getDirection();
                 if (len <= trgt.radius+radius+speed){ // подлетели вплотную, взрываемся
-                    trgt.hp -= DAMAGE; // цели наносим серьезный дамаг
+                    trgt.hp -= damage; // цели наносим серьезный дамаг
                     hp = 0;
                 }
             }
@@ -81,7 +81,7 @@ package main {
         // Масса ракеты используется при расчете ударной волны при взрыве
         // поэтому ставим большую, словно взорвался большой астероид
         override public function getMassa():Number {
-            return 200;
+            return GameConst.rocketExplosnPower;
         }
     }
 }

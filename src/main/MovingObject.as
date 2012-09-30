@@ -6,7 +6,7 @@ package main
     {
         private var dropRadius:Number = GameConst.dropRadius;
         private var minSpeed:Number = GameConst.minSpeed;
-        private var maxSpeed:Number = GameConst.minSpeed;
+        private var maxSpeed:Number = GameConst.maxSpeed;
 
         private var rot:Number;
 
