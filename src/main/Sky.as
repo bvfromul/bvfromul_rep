@@ -291,7 +291,11 @@ package main
                             panel.addPoints(obj.maxHP);
                             // аттачим мувик взрыва
                             explosion = new ExplosionObject();
-                            this.panel.PlaySnd('asteroids_clash', obj);
+
+                            if (this.panel)
+                            {
+                                this.panel.PlaySnd('asteroids_clash', obj);
+                            }
                         }
                         explosion.init(obj);
                         addChild(explosion);

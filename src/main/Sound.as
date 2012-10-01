@@ -1,6 +1,5 @@
 package main {
     import flash.media.SoundTransform;
-    import main.Vector_h;
 
     dynamic public class Sound extends Object
     {
@@ -27,19 +26,22 @@ package main {
         // Воспроизводит звук с учетом пространства
         // (dx,dy - смещение источника звука относительно центра экрана)
         // dv - множитель для громкости
-        public function Play2DSnd(snd_name:String, dx:Number, dy:Number):void
+        public function Play2DSnd(sndName:String, dx:Number, dy:Number):void
         {
-            var soundTransfm:SoundTransform, v:Vector_h;
-            if (! Volume.volume) return;// запрет звуков
-            v = new Vector_h(dx, dy);
+            var soundTransfm:SoundTransform, vector:Vector_h;
+            if (! Volume.volume)
+            {
+                return;// запрет звуков
+            }
+            vector = new Vector_h(dx, dy);
             soundTransfm = new SoundTransform();
             // Ставим громкость в зависимости от расстояния
             // Делаем так, чтобы громкость в углу экрана (stageRadius) была 50% от общей
-            soundTransfm.volume = Volume.volume / (1 + v.magnitude2()/stageRadius);
+            soundTransfm.volume = Volume.volume / (1 + vector.magnitude2()/stageRadius);
             // стерео в зависимости от угла до источника звука
-            soundTransfm.pan = 1 - Math.abs(v.getDirection())/90;
+            soundTransfm.pan = 1 - Math.abs(vector.getDirection())/90;
             // воспроизводим
-            snd[snd_name].play(0, 0, soundTransfm);
+            snd[sndName].play(0, 0, soundTransfm);
         }
     }
 }

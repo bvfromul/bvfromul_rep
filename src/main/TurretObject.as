@@ -2,18 +2,17 @@ package main
 {
     import flash.events.Event;
     import main.BasicObject;
-    import main.Vector_h;
 
     dynamic public class TurretObject extends BasicObject
     {
-        public var trgt_radius :Number;               // радиус поражения цели
-        public var max_weapon_recharge:Number;        // максимальное значение заряда пушки
-        public var turretType :Number;               // тип турели: 1-лазерная, 2-ракетная
-        public var trgt        :BasicObject;         // цель
+        public var trgtRadius:Number;               // радиус поражения цели
+        public var maxWeaponRecharge:Number;        // максимальное значение заряда пушки
+        public var turretType:Number;               // тип турели
+        public var trgt:BasicObject;                // цель
         public var cost:Number;                     // сколько монет стоит эта турель
-        var weapon_recharge:Number;                   // счетчик перезарядки пушки
-        var velocitySlowdown:Number = 0.91;	// коэффициент уменьшения скорости
-        var findBigObjects:Boolean;	// приоритенее объекты с большим кол-вом уровни жизни (для турелей)
+        var weaponRecharge:Number;                  // счетчик перезарядки пушки
+        var velocitySlowdown:Number = 0.91;         // коэффициент уменьшения скорости
+        var findBigObjects:Boolean;                 // приоритенее объекты с большим кол-вом уровни жизни (для турелей)
 
         public function TurretObject()
         {
@@ -21,17 +20,17 @@ package main
             // вычислим наш радиус, основываясь на размере картинки
             radius = Math.floor((this.bg.width+this.bg.height)/4);
             // запустим процесс зарядки пушки
-            weapon_recharge=0;
-            if (this.bg["recharge_mc"])
+            weaponRecharge=0;
+            if (this.bg["rechargeClip"])
             {
-                this.bg.recharge_mc.gotoAndStop(1);
+                this.bg.rechargeClip.gotoAndStop(1);
             }
         }
 
         // Переопределяем функцию "Переместиться"
         override public function move():void
         {
-            var v:Vector_h, angle:Number;
+            var vector:Vector_h, angle:Number;
             // передвигаться турель может только если ее толкнули
             x += velocity.x;
             y += velocity.y;
@@ -42,14 +41,14 @@ package main
             else velocity.y=0;
 
             // перезарядка пушки
-            if (weapon_recharge < max_weapon_recharge)
+            if (weaponRecharge < maxWeaponRecharge)
             {
-                weapon_recharge++;
+                weaponRecharge++;
             }
             // отобразим процент заряда пушки
-            if (max_weapon_recharge > 0)
+            if (maxWeaponRecharge > 0)
             {
-                this.bg.recharge_mc.gotoAndStop(Math.floor(weapon_recharge/max_weapon_recharge*100)+1);
+                this.bg.rechargeClip.gotoAndStop(Math.floor(weaponRecharge/maxWeaponRecharge*100)+1);
             }
 
             if (trgt)
@@ -64,8 +63,8 @@ package main
                 {
                     // цель еще жива
                     // создадим вектор до цели
-                    v = new Vector_h(trgt.x-x, trgt.y-y);
-                    if (v.magnitude() > trgt_radius)
+                    vector = new Vector_h(trgt.x-x, trgt.y-y);
+                    if (vector.magnitude() > trgtRadius)
                     {
                         // цель ушла из радиуса поражения
                         trgt = undefined; // будем искать другую
@@ -74,7 +73,7 @@ package main
                     {
                         // повернемся к цели
                         // на сколько нужно повернуться до цели
-                        angle = v.getDirection() - this.bg.rotation;
+                        angle = vector.getDirection() - this.bg.rotation;
                         // проблема с переходом -180...180
                         if (angle > 180)
                         {
@@ -89,7 +88,7 @@ package main
                             // за раз поворачиваемся не более чем на 10 градусов
                             this.bg.rotation += Math.abs(angle)>10?(angle>0?10:-10):angle;
                         }
-                        if (Math.abs(angle)<=5 && weapon_recharge>=max_weapon_recharge)
+                        if (Math.abs(angle)<=5 && weaponRecharge>=maxWeaponRecharge)
                         {
                             // пушка наведена на цель и заряжена
                             fire();	// ПЛИИИИИИ!!!!!
@@ -97,30 +96,30 @@ package main
                     }
                 }
             }
-            if (! trgt && trgt_radius > 0)
+            if (! trgt && trgtRadius > 0)
             {
                 // нужно искать новую цель
                 findTarget();
             }
         }
 
-        // Ищет цель в радиусе trgt_radius
+        // Ищет цель в радиусе trgtRadius
         public function findTarget():void
         {
             var i:Number, j:Number;
-            var obj:BasicObject, s:String;
-            var v:Vector_h;
+            var obj:BasicObject, sector:String;
+            var vector:Vector_h;
             var list:Array = []; // список возможных целей
             var o:Object;
 
             // пробегаемся по всем секторам, которые попадают в радиус поиска цели
-            for (i = Math.floor((x - trgt_radius) / 100); i <= Math.floor((x + trgt_radius) / 100); i++)
+            for (i = Math.floor((x - trgtRadius) / 100); i <= Math.floor((x + trgtRadius) / 100); i++)
             {
-                for (j = Math.floor((y - trgt_radius) / 100); j <= Math.floor((y + trgt_radius) / 100); j++)
+                for (j = Math.floor((y - trgtRadius) / 100); j <= Math.floor((y + trgtRadius) / 100); j++)
                 {
                     // название сектора
-                    s = i+"_"+j;
-                    for each (obj in (parent as Sky).allSectors[s])
+                    sector = i+"_"+j;
+                    for each (obj in (parent as Sky).allSectors[sector])
                     {
                         // все объекты в секторе
                         if ((obj.type == 'asteroid') && (obj.hp > 0))
@@ -130,18 +129,19 @@ package main
                             o = {};
                             o.obj = obj;
                             // создадим вектор от нас до цели
-                            v = new Vector_h(obj.x-x, obj.y-y);
+                            vector = new Vector_h(obj.x-x, obj.y-y);
                             // добавим скорость
-                            v.addVector(obj.velocity);
+                            vector.addVector(obj.velocity);
                             // оцениваем по расстоянию до объекта, плюс HP
                             if (findBigObjects)
                             {
                                 // приоритенее "толстые" объекты
-                                o.len = v.magnitude() - obj.maxHP;
-                            } else
+                                o.len = vector.magnitude() - obj.maxHP;
+                            }
+                            else
                             {
                                 // приоритетнее "дохлые" объекты
-                                o.len = v.magnitude() + obj.hp;
+                                o.len = vector.magnitude() + obj.hp;
                             }
                             // добавляем в массив возможных целей
                             list.push(o);
@@ -149,7 +149,9 @@ package main
                     }
                 }
             }
-            if (! list.length){ // не обнаружилось ни одной цели
+            if (! list.length)
+            {
+                // не обнаружилось ни одной цели
                 return;
             }
             // цели отсортируем по расстоянию
@@ -170,7 +172,7 @@ package main
         {
             graphics.clear();
             graphics.lineStyle(3, 0x0000FF, 0.3);
-            graphics.drawCircle(0,0, trgt_radius);
+            graphics.drawCircle(0,0, trgtRadius);
             // вызываем функцию ShowInfo предка
             super.showInfo(event);
         }

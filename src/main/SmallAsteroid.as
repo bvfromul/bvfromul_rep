@@ -5,8 +5,8 @@ package main
 
     dynamic public class SmallAsteroid extends MovieClip
     {
-        const MIN_SPEED:Number = 3;    // раброс начальной скорости
-        const MAX_SPEED:Number = 10;
+        private var asteroidSpallMinSpeed:Number = GameConst.asteroidSpallMinSpeed;
+        private var asteroidSpallMaxSpeed:Number = GameConst.asteroidSpallMaxSpeed;
         public var velocity:Vector_h; // вектор движения
         public var rot:Number; // направление вращения
         public var cnt:Number; // счетчик до полного изчезновения осколка
@@ -17,7 +17,7 @@ package main
             //случайный вектор
             velocity = new Vector_h(100*(Math.random()-0.5),100*(Math.random()-0.5));
             // скорость
-            var spd:Number = MIN_SPEED + (MAX_SPEED-MIN_SPEED)*Math.random();
+            var spd:Number = asteroidSpallMinSpeed + (asteroidSpallMaxSpeed-asteroidSpallMinSpeed)*Math.random();
             // приведем длину вектора к выбранной скорости
             velocity.mulScalar( spd / velocity.magnitude() );
             // складываем с вектором взрывающегося объекта

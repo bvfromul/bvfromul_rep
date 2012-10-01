@@ -80,7 +80,8 @@ package main {
 
         // Масса ракеты используется при расчете ударной волны при взрыве
         // поэтому ставим большую, словно взорвался большой астероид
-        override public function getMassa():Number {
+        override public function getMassa():Number
+        {
             return GameConst.rocketExplosnPower;
         }
     }
