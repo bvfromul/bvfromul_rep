@@ -3,8 +3,8 @@ package main {
 
     dynamic public class Sound extends Object
     {
-        var snd:Object; // хэш со звуками
-        var stageRadius:Number; // примерный радиус видимой области
+        internal var snd:Object;         // хэш со звуками
+        internal var stageRadius:Number; // примерный радиус видимой области
 
         public function init(stageWidth:Number, stageHeight:Number)
         {

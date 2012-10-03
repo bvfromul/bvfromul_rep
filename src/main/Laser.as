@@ -4,23 +4,22 @@ package main
     import flash.display.MovieClip;
     import flash.filters.GlowFilter;
     import flash.geom.ColorTransform;
-    import main.Vector_h;
 
     dynamic public class Laser extends MovieClip
     {
-        var currentAsteroid:BasicObject;
+        internal var currentAsteroid:BasicObject;
 
         // ссылка на турель и на астероид
         public function init(turret:TurretObject, asteroid:BasicObject)
         {
             var x2:Number, y2:Number;
-            var v:Vector_h;
+            var vector:Vector_h;
             currentAsteroid = asteroid; // запоминаем ссылку на астероид
-            v = new Vector_h(asteroid.x - turret.x, asteroid.y - turret.y);
+            vector = new Vector_h(asteroid.x - turret.x, asteroid.y - turret.y);
             // длина луча лазера равна расстоянию до цели
-            width = v.magnitude();
+            width = vector.magnitude();
             // поворачиваемся к цели
-            rotation = v.getDirection();
+            rotation = vector.getDirection();
             // позиция из центра турели
             x = turret.x;
             y = turret.y;
@@ -37,7 +36,10 @@ package main
         {
             // вернем естественный цвет астероиду
             currentAsteroid.transform.colorTransform = new ColorTransform(1,1,1, 1, 0,0,0, 0);
-            if (parent){ parent.removeChild(this) }
+            if (parent)
+            {
+                parent.removeChild(this);
+            }
         }
     }
 }

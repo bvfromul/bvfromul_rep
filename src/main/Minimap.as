@@ -3,13 +3,13 @@ package main
     import flash.display.Sprite;
     import flash.events.MouseEvent;
     import flash.events.Event;
-    import main.Sky;
 
     dynamic public class Minimap extends Sprite
     {
-        private var parentClass:Sky;           // ссылка на главный класс
-        var xscale:Number, yscale:Number;      // масштаб карты
-        var bg:Sprite;                         // здесь все рисуем
+        internal var xscale:Number, yscale:Number;      // масштаб карты
+        internal var bg:Sprite;                         // здесь все рисуем
+
+        private var parentClass:Sky;                    // ссылка на главный класс
 
         public function Minimap(sky:Sky)
         {

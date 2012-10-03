@@ -4,12 +4,12 @@ package main {
 
     dynamic public class TurretBastion extends TurretObject
     {
+        internal var phosphorescence:Number;    // пульсация свечения
+        internal var glowFilter:Array;          // само свечение
+
         private var turretBastionHp:Number = GameConst.turretBastionHp;
         private var turretBastionCost:Number = GameConst.turretBastionCost;
         private var turretBastionMassa:Number = GameConst.turretBastionMassa;
-
-        var phosphorescence:Number;    // пульсация свечения
-        var glowFilter:Array;          // само свечение
 
         public function TurretBastion()
         {

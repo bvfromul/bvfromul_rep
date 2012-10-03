@@ -8,7 +8,8 @@ package main {
 
     dynamic public class GameOver extends Sprite
     {
-        var bg:Sprite;
+        internal var bg:Sprite;
+
         private var parentClass:Sky;
 
         public function set _parentClass(sky:Sky):void

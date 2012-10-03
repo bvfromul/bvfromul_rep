@@ -1,18 +1,18 @@
 package main
 {
     import flash.events.Event;
-    import main.BasicObject;
 
     dynamic public class TurretObject extends BasicObject
     {
-        public var trgtRadius:Number;               // радиус поражения цели
-        public var maxWeaponRecharge:Number;        // максимальное значение заряда пушки
-        public var turretType:Number;               // тип турели
-        public var trgt:BasicObject;                // цель
-        public var cost:Number;                     // сколько монет стоит эта турель
-        var weaponRecharge:Number;                  // счетчик перезарядки пушки
-        var velocitySlowdown:Number = 0.91;         // коэффициент уменьшения скорости
-        var findBigObjects:Boolean;                 // приоритенее объекты с большим кол-вом уровни жизни (для турелей)
+        public var trgtRadius:Number;                        // радиус поражения цели
+        public var maxWeaponRecharge:Number;                 // максимальное значение заряда пушки
+        public var turretType:Number;                        // тип турели
+        public var trgt:BasicObject;                         // цель
+        public var cost:Number;                              // сколько монет стоит эта турель
+
+        internal var weaponRecharge:Number;                  // счетчик перезарядки пушки
+        internal var velocitySlowdown:Number = 0.91;         // коэффициент уменьшения скорости
+        internal var findBigObjects:Boolean;                 // приоритенее объекты с большим кол-вом уровни жизни (для турелей)
 
         public function TurretObject()
         {
@@ -35,10 +35,23 @@ package main
             x += velocity.x;
             y += velocity.y;
             // "гасим" скорость, турель пытается удержаться на своей позиции
-            if (Math.abs(velocity.x)>0.4) velocity.x *= velocitySlowdown;
-            else velocity.x=0;
-            if (Math.abs(velocity.y)>0.4) velocity.y *= velocitySlowdown;
-            else velocity.y=0;
+            if (Math.abs(velocity.x) > 0.4)
+            {
+                velocity.x *= velocitySlowdown;
+            }
+            else
+            {
+                velocity.x = 0;
+            }
+
+            if (Math.abs(velocity.y) > 0.4)
+            {
+                velocity.y *= velocitySlowdown;
+            }
+            else
+            {
+                velocity.y=0;
+            }
 
             // перезарядка пушки
             if (weaponRecharge < maxWeaponRecharge)

@@ -9,16 +9,15 @@ package main
 
     dynamic public class BasicObject extends MovieClip
     {
-        public var radius:Number;                           // радиус
-        public var sectors:Object;                          // какие сектора пересекает объект
-        public var velocity:Vector_h;                       // вектор движения
-        public var type;                                    // тип объекта
+        public var radius:Number;                                    // радиус
+        public var sectors:Object;                                   // какие сектора пересекает объект
+        public var velocity:Vector_h;                                // вектор движения
+        public var type;                                             // тип объекта
 
-        var hpLine:HPline;                                  // мувик полоски уровня жизни
-        var hideTimeout:Number = GameConst.hideTimeout;     // id таймера на удаление полоски уровня жизни
-        var mHP:Number;
-        var tkHP:Number;
-
+        internal var hpLine:HPline;                                  // мувик полоски уровня жизни
+        internal var hideTimeout:Number = GameConst.hideTimeout;     // id таймера на удаление полоски уровня жизни
+        internal var mHP:Number;
+        internal var tkHP:Number;
 
         public function BasicObject()
         {

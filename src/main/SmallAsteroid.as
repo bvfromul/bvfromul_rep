@@ -5,11 +5,12 @@ package main
 
     dynamic public class SmallAsteroid extends MovieClip
     {
+        public var velocity:Vector_h;   // вектор движения
+        public var rot:Number;          // направление вращения
+        public var cnt:Number;          // счетчик до полного изчезновения осколка
+
         private var asteroidSpallMinSpeed:Number = GameConst.asteroidSpallMinSpeed;
         private var asteroidSpallMaxSpeed:Number = GameConst.asteroidSpallMaxSpeed;
-        public var velocity:Vector_h; // вектор движения
-        public var rot:Number; // направление вращения
-        public var cnt:Number; // счетчик до полного изчезновения осколка
 
         public function init(obj:BasicObject)
         {

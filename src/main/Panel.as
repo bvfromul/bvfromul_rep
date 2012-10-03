@@ -12,12 +12,12 @@ package main
         public var money:Number;               // сколько игрок имеет денег
         public var minimap:Minimap;
 
+        internal var gameSnd:Sound;            // пространственные звуки
+
         private var kfMoney:Number;            // коэффициент HP/money
         private var twinklingCnt:Number;       // счетчик мерцания стоимости
         private var twinklingNm:String;        // для какой турели мерцает стоимость
         private var parentClass:Sky;           // ссылка на главный класс
-        var gameSnd:Sound;                     // пространственные звуки
-
 
         public function Panel(sky:Sky)
         {
@@ -132,7 +132,8 @@ package main
                 this["money_"+twinklingNm].visible = this.moneyLabel.visible = !this.moneyLabel.visible;
             }
             else
-            { // закончили
+            {
+                // закончили
                 stopTwinkling();
             }
         }

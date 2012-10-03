@@ -68,7 +68,9 @@ package main {
                 velocity.mulScalar( speed / len );
                 // поворачиваемся к цели
                 this.bg.rotation = velocity.getDirection();
-                if (len <= trgt.radius+radius+speed){ // подлетели вплотную, взрываемся
+                if (len <= trgt.radius + radius + speed)
+                {
+                    // подлетели вплотную, взрываемся
                     trgt.hp -= damage; // цели наносим серьезный дамаг
                     hp = 0;
                 }

@@ -7,28 +7,26 @@ package main
 
     dynamic public class Sky extends MovieClip
     {
+        internal var allMoving:Array;                  // здесь все движущиеся объекты
+        internal var allSectors:Object;                // сектора со ссылками на объекты в них
+        internal var panel:Panel;
+        internal var asteroidCount:Number = 0;
+
         private var asteroidIncSpeedDrop:Number = GameConst.asteroidIncSpeedDrop;
         private var asteroidFirstDrop:Number = GameConst.asteroindFirstDrop;
         private var asteroidCntMinDrop:Number = GameConst.asteroidCntMinDrop
         private var asteroidCntMaxDrop:Number = GameConst.asteroidCntMaxDrop
-
         private var asteroidDropCnt:Number;            // примерное количество вбрасываемых астероидов
         private var firstPause:Number;                 // неск. секунд в начале игры не бросаем астероиды
-
-        var allMoving:Array;                   // здесь все движущиеся объекты
-        var allSectors:Object;                 // сектора со ссылками на объекты в них
-        var panel:Panel;
-        var asteroidCount:Number = 0;
 
         public function Sky()
         {
             allMoving = [];
-            allSectors = { };
+            allSectors = {};
             var zone:String;
 
             asteroidDropCnt = asteroidFirstDrop;
             firstPause = 21*7; // пауза в начале игры
-
 
             // Перехватываем нажатие кнопки мыши по нашему мувику
             addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
@@ -70,7 +68,8 @@ package main
         }
 
         // закончили
-        public function done():void {
+        public function done():void
+        {
 
             for each (var obj:BasicObject in allMoving)
             {

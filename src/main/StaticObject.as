@@ -1,7 +1,5 @@
 package main
 {
-    import main.BasicObject;
-
     dynamic public class StaticObject extends BasicObject
     {
         public function StaticObject()

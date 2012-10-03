@@ -9,9 +9,10 @@ package main {
 
     dynamic public class Volume extends Sprite
     {
-        static var volume:Number = 0.7; // громкость звуков
-        var oldVolume:Number;           // громкость звуков до выключения
-        public var bgSnd:SoundChannel;  // фоновая музыка
+        public var bgSnd:SoundChannel;           // фоновая музыка
+
+        internal static var volume:Number = 0.7; // громкость звуков
+        internal var oldVolume:Number;           // громкость звуков до выключения
 
         public function Volume()
         {
